@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# exclude TextMesh Pro files
+/DungeonGame/[Aa]ssets/TextMesh Pro/
+/DungeonGame/[Aa]ssets/TextMesh Pro.meta
