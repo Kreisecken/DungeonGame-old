@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace DungeonGame 
@@ -14,6 +15,11 @@ namespace DungeonGame
         void Update()
         {
             Debug.Log("Hello World!");
+        }
+
+        void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(transform.position, 1);
         }
     }
 }
