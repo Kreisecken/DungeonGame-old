@@ -9,12 +9,12 @@ namespace DungeonGame
     {
         void Start()
         {
-            
+            Debug.Log("Hello World!");
         }
 
         void Update()
         {
-            Debug.Log("Hello World!");
+            
         }
 
         void OnDrawGizmos()
