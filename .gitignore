@@ -9,6 +9,7 @@
 /DungeonGame/[Bb]uilds/
 /DungeonGame/[Ll]ogs/
 /DungeonGame/[Mm]emoryCaptures/
+/DungeonGame/[Uu]serSettings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/DungeonGame/[Aa]ssets/**/*.meta
