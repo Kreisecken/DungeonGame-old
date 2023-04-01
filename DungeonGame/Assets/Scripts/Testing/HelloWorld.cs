@@ -11,15 +11,5 @@ namespace DungeonGame
         {
             Debug.Log("Hello World!");
         }
-
-        void Update()
-        {
-            
-        }
-
-        void OnDrawGizmos()
-        {
-            Gizmos.DrawWireSphere(transform.position, 1);
-        }
     }
 }

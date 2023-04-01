@@ -1,19 +1,18 @@
+using DungeonGame.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace DungeonGame.Player
 {
-    public Rigidbody2D rigid;
-    public Vector2 movement;
-    public float speed;
-    void Update()
+    public class PlayerController : MonoBehaviour
     {
-        movement = (Input.GetAxis("Horizontal") * Vector2.right + Input.GetAxis("Vertical") * Vector2.up);
-    }
+        public Rigidbody2D rigidBody;
+        public float speed; // maybe use a AnimationCurve for the movement here?
 
         void FixedUpdate()
-    {
-        rigid.MovePosition(rigid.position + movement * Time.fixedDeltaTime * speed);
+        {
+            rigidBody.MovePosition(rigidBody.position + GameInput.Movement * Time.fixedDeltaTime * speed);
+        }
     }
 }
