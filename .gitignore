@@ -2,17 +2,17 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/DungeonGame/[Ll]ibrary/
-/DungeonGame/[Tt]emp/
-/DungeonGame/[Oo]bj/
-/DungeonGame/[Bb]uild/
-/DungeonGame/[Bb]uilds/
-/DungeonGame/[Ll]ogs/
-/DungeonGame/[Mm]emoryCaptures/
-/DungeonGame/[Uu]serSettings/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Mm]emoryCaptures/
+/[Uu]serSettings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
-!/DungeonGame/[Aa]ssets/**/*.meta
+!/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
@@ -63,5 +63,5 @@ sysinfo.txt
 crashlytics-build.properties
 
 # exclude TextMesh Pro files
-/DungeonGame/[Aa]ssets/TextMesh Pro/
-/DungeonGame/[Aa]ssets/TextMesh Pro.meta
+/[Aa]ssets/TextMesh Pro/
+/[Aa]ssets/TextMesh Pro.meta
