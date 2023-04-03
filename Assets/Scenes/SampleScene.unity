@@ -229,23 +229,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1567d0ec1210a1f449969ab2137f8333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  device:
-    Look:
-      rid: -2
-  pc:
-    Look:
-      rid: -2
-  mobile:
-    Look:
-      rid: -2
-  controller:
-    Look:
-      rid: -2
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
 --- !u!4 &331099203
 Transform:
   m_ObjectHideFlags: 0
@@ -384,10 +367,8 @@ MonoBehaviour:
   outerPart: {fileID: 69480563}
   center: {x: 250, y: 250, z: 0}
   radius: 250
-  speed: 0
-  Movement: {x: 0, y: 0, z: 0}
-  position: {x: 0, y: 0, z: 0}
-  direction: {x: 0, y: 0, z: 0}
+  speed: 8.59
+  Output: {x: 0, y: 0, z: 0}
 --- !u!1 &892396766
 GameObject:
   m_ObjectHideFlags: 0

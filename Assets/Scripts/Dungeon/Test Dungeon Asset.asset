@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7c3b5b657e91e84e9ccd5e55b89e638, type: 3}
+  m_Name: Test Duneon Asset
+  m_EditorClassIdentifier: 
+  rooms:
+  - dungeonPrefab: {fileID: 0}
+    minCount: 0
+    maxCount: 0
+    probability: 0.384
+    additionalRequiredRooms:
+    - dungeonPrefab: {fileID: 0}
+      minCount: 15
+      maxCount: 21
+      probability: 0
+      additionalRequiredRooms: []
