@@ -77,9 +77,4 @@ namespace DungeonGame.Dungeon
                 GameObject.Destroy(child.gameObject);
         }
     }
-
-    public class DungeonSection : MonoBehaviour
-    {
-        public List<DungeonRoom> Rooms { get; set; }
-    }
 }

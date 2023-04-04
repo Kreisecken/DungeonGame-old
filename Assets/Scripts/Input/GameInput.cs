@@ -15,11 +15,13 @@ namespace DungeonGame.InputSystem
         public static Vector2 Movement { get => CurrentDevice.Movement(); }
         public static Vector2 Look     { get => CurrentDevice.Look    (); }
 
-        public static InputDevice CurrentDevice { get; private set; }
+        public static InputDevice CurrentDevice { get => Instance.currentDevice; }
 
         public static PCInputDevice         PC         { get; private set; }
         public static MobileInputDevice     Mobile     { get; private set; }
         public static ControllerInputDevice Controller { get; private set; }
+
+        public InputDevice currentDevice;
 
         private void Awake()
         {
@@ -33,16 +35,5 @@ namespace DungeonGame.InputSystem
             Mobile     = mobile    ;
             Controller = controller;
         }
-    }
-
-    public abstract class InputDevice : MonoBehaviour
-    {
-        public abstract Vector2 Movement();
-        public abstract Vector2 Look    ();
-
-        // maybe something like "RequestFocus()" for changing GameInput.CurrentDevice?
-        // maybe something like "UpdateUI()", e.g. to set the visibility of the JoySticks?
-        // how could we select items in the inventory with controllers?
-        // maybe a cursor that can be controlled with the JoyStick like in other games?
     }
 }
