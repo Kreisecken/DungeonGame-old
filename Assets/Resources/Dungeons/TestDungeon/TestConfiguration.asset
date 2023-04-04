@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7c3b5b657e91e84e9ccd5e55b89e638, type: 3}
+  m_Name: TestConfiguration
+  m_EditorClassIdentifier: 
+  dungeonName: 
+  independentRooms:
+  - room: {fileID: 2013249226345836254, guid: 477de6c32d57e7c49a6eb2287623234b, type: 3}
+    minCount: 3
+    maxCount: 6
+    probability: 1
+    minNeighbours: 2
+    maxNeighbours: 3
+    isStartRoom: 0
+    isSectorConnection: 0
+  sections:
+  - dungeonSectionName: TestSection
+    rooms:
+    - room: {fileID: 2013249226345836254, guid: 477de6c32d57e7c49a6eb2287623234b, type: 3}
+      minCount: 11
+      maxCount: 14
+      probability: 1
+      minNeighbours: 6
+      maxNeighbours: 9
+      isStartRoom: 1
+      isSectorConnection: 1
