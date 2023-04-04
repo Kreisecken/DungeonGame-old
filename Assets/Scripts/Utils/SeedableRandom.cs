@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace DungeonGame.Utils
@@ -24,9 +25,9 @@ namespace DungeonGame.Utils
         public SeedableRandom()          => Seed = Environment.TickCount;
         public SeedableRandom(Seed seed) => Seed = seed;
 
-        public double Double()
+        public float Float()
         {
-            return (long)((ulong)Next() >> 11) * 2.9103830456733704e-11; // 0x1.0p-53
+            return Next() / long.MaxValue;
         }
 
         public int Int32(int bound)
@@ -51,12 +52,12 @@ namespace DungeonGame.Utils
 
         public double Double(double min, double max)
         {
-            return Double() * (max - min) + min;
+            return Float() * (max - min) + min;
         }
 
         public bool Bool(double probability)
         {
-            return Double() < probability;
+            return Float() < probability;
         }
 
         public string String(int length, char[] charSet)
@@ -67,6 +68,14 @@ namespace DungeonGame.Utils
                 chars[i] = charSet[Int32(0, charSet.Length - 1)];
 
             return new string(chars);
+        }
+
+        public Vector2 PointInsideUnitCircle()
+        {
+            float theta = 2 * Mathf.PI * Float();
+            float r = Mathf.Sqrt(Float());
+
+            return new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * r;
         }
 
         //xoshiro256ss
@@ -95,6 +104,8 @@ namespace DungeonGame.Utils
 
         public static implicit operator Seed  (SeedableRandom random) => random.Seed;
         public static implicit operator SeedableRandom(Seed   seed  ) => new(seed);
+        public static implicit operator SeedableRandom(string seed  ) => new((Seed) seed);
+        public static implicit operator SeedableRandom(int    seed  ) => new((Seed) seed);
     }
 
     public struct Seed
