@@ -49,7 +49,7 @@ namespace DungeonGame.Dungeon
 
                 foreach (var roomConfiguration in sectionConfiguration.rooms)
                 {
-                    roomConfiguration.CreateRooms(section.transform, section.Rooms, random);
+                    roomConfiguration.CreateRooms(section.transform, section.rooms, random);
                 }
 
                 sections.Add(section);
@@ -62,7 +62,7 @@ namespace DungeonGame.Dungeon
             {
                 section.transform.position = random.PointInsideUnitCircle();
             
-                foreach (DungeonRoom room in section.Rooms)
+                foreach (DungeonRoom room in section.rooms)
                 {
                     room.transform.position = random.PointInsideUnitCircle();
                 }
