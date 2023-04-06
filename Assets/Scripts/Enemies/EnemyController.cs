@@ -9,11 +9,19 @@ namespace DungeonGame.Enemies
     {
         [Header("Player Detection")]
         public Transform orientation;
-        [Min(0f)] public float hearRange = 5;
-        [Min(0f)] public float seeRange = 10;
-        [Range(0f, 360f)] public float seeAngle = 90;
+        [Min(0f)] public float hearRange = 5f;
+        [Min(0f)] public float seeRange = 10f;
+        [Range(0f, 360f)] public float seeAngle = 90f;
+        [Min(0)] public float detectionDelay = 1f; // delay between detections
         
-        private void OnDrawGizmos()
+        [Header("Movement")]
+        public Rigidbody2D rb;
+        public float speed = 3f;
+        
+        public Transform target;
+        private float detectionCD = 0f; // seconds since last detection attempt
+        
+        private void OnDrawGizmosSelected()
         {
             if(orientation == null) return;
             
@@ -32,9 +40,14 @@ namespace DungeonGame.Enemies
             
         }
         
-        private void Update()
+        private void FixedUpdate()
         {
+            if(target == null) return;
             
+            // TODO: implement better path finding
+            Vector3 delta = target.position - transform.position;
+            orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+            rb.MovePosition(transform.position + delta.normalized * Time.deltaTime * speed);
         }
     }
 }
