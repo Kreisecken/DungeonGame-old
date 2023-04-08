@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -27,12 +28,17 @@ namespace DungeonGame.Utils
 
         public float Float()
         {
-            return Next() / long.MaxValue;
+            return (float) Int64() / long.MaxValue;
+        }
+
+        public int Int32()
+        {
+            return (int) Int64();
         }
 
         public int Int32(int bound)
         {
-            return (int) Int64(bound);
+            return Int32() % bound;
         }
 
         public int Int32(int min, int max)
@@ -40,9 +46,14 @@ namespace DungeonGame.Utils
             return Int32(max - min + 1) + min;
         }
 
+        public long Int64()
+        {
+            return (Next() & long.MaxValue);
+        }
+
         public long Int64(long bound)
         {
-            return (Next() & long.MaxValue) % bound;
+            return Int64() % bound;
         }
 
         public long Int64(int min, int max)
@@ -75,11 +86,22 @@ namespace DungeonGame.Utils
             float theta = 2 * Mathf.PI * Float();
             float r = Mathf.Sqrt(Float());
 
+            Debug.Log(Mathf.Cos(theta));
             return new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * r;
         }
 
-        //xoshiro256ss
-        private long Next()
+        // Fisher-Yates shuffle
+        public void Shuffle<T>(IList<T> list)
+        {
+            for (int i = 0; i < list.Count - 2; i++)
+            {
+                int randomIndex = Int32(i, list.Count - 1);
+                (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
+            }
+        }
+
+        // xoshiro256ss
+        public long Next()
         {
             long result = Rol64(state[1] * 5, 7) * 9;
 
@@ -108,7 +130,7 @@ namespace DungeonGame.Utils
         public static implicit operator SeedableRandom(int    seed  ) => new((Seed) seed);
     }
 
-    public struct Seed
+    public readonly struct Seed
     {
         private readonly long value;
 
