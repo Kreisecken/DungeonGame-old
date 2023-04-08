@@ -9,13 +9,10 @@ namespace DungeonGame.Dungeon
     public class DungeonRoom : MonoBehaviour
     {
         public string roomName;
-        // OnPlayerEnter()
-        // OnAllEnemysGone()
 
-        // LockDoors()
-        // UnlockDoors()
+        public DungeonRoomConfiguration config;
+        public Dungeon dungeon;
 
-        // LockDoor(int doorIndex)
-        // UnlockDoor(int doorIndex()
+        public List<DungeonRoom> neighbours;
     }
 }
