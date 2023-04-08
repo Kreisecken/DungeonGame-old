@@ -486,8 +486,10 @@ MonoBehaviour:
   seeRange: 10
   seeAngle: 90
   detectionDelay: 1
-  rigidbody: {fileID: 1279435542}
+  rb: {fileID: 1279435542}
   speed: 3
+  minPlayerDistance: 2
+  maxPlayerDistance: 5
   target: {fileID: 1756553400}
 --- !u!4 &1279435541
 Transform:
@@ -513,14 +515,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1279435539}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
