@@ -17,7 +17,7 @@ MonoBehaviour:
   - room: {fileID: 2013249226345836254, guid: 477de6c32d57e7c49a6eb2287623234b, type: 3}
     minCount: 3
     maxCount: 6
-    probability: 1
+    probability: 0.99319965
     minNeighbours: 2
     maxNeighbours: 3
     isStartRoom: 0
@@ -26,9 +26,9 @@ MonoBehaviour:
   - dungeonSectionName: TestSection
     rooms:
     - room: {fileID: 2013249226345836254, guid: 477de6c32d57e7c49a6eb2287623234b, type: 3}
-      minCount: 11
-      maxCount: 14
-      probability: 1
+      minCount: 1
+      maxCount: 5
+      probability: 0.108
       minNeighbours: 6
       maxNeighbours: 9
       isStartRoom: 1
