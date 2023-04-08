@@ -1,7 +1,6 @@
 ﻿using DungeonGame.Utils;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace DungeonGame.Dungeon
@@ -11,6 +10,8 @@ namespace DungeonGame.Dungeon
         public DungeonConfiguration configuration;
 
         public DungeonRoom startRoom;
+         
+        public List<DungeonRoom> independentRooms;
         public List<DungeonSection> sections;
 
         public SeedableRandom random;
@@ -21,60 +22,63 @@ namespace DungeonGame.Dungeon
             GenerateDungeon(configuration, "Hello, World!");
         }
 
-        public void GenerateDungeon(DungeonConfiguration configuration, SeedableRandom random)
+        public void GenerateDungeon(DungeonConfiguration config, SeedableRandom random)
         {
             DestroyDungeon();
         
-            this.configuration = configuration;
+            this.configuration = config;
             this.random        = random;
 
-            CreateRooms();
-            PlaceRoomsRandomly();
-            // LayOutRooms()
-            // DelaunayTriangulation()
-            // GenerateMinimumSpanningTree()
-            // AddSomeEdgesFromDelauneyBack(float percentage)
-            // GenerateHallways()
-            // Done() ?
+            CreateRooms(config.independentRooms, ref independentRooms);
+
+            GenerateSections(independentRooms);
         }
 
-        public void CreateRooms()
+        public void CreateRooms(List<DungeonRoomConfiguration> roomConfigs, ref List<DungeonRoom> list)
+        {
+            list ??= new();
+
+            foreach (var roomConfig in roomConfigs)
+                CreateRooms(list, roomConfig);
+        }
+
+        public void GenerateSections(List<DungeonRoom> independentRooms)
         {
             foreach (var sectionConfiguration in configuration.sections)
             {
-                GameObject gameObject = new(sectionConfiguration.dungeonSectionName);
-                DungeonSection section = gameObject.AddComponent<DungeonSection>();
+                GameObject sectionGameObject = new("section");
+                sectionGameObject.transform.parent = transform;
 
-                section.transform.parent = transform;
+                DungeonSection section = sectionGameObject.AddComponent<DungeonSection>();
 
-                foreach (var roomConfiguration in sectionConfiguration.rooms)
-                {
-                    roomConfiguration.CreateRooms(section.transform, section.Rooms, random);
-                }
+                section.Generate(this, independentRooms, sectionConfiguration);
+
+                independentRooms.Shuffle(random);
 
                 sections.Add(section);
             }
         }
 
-        public void PlaceRoomsRandomly()
-        {
-            foreach (DungeonSection section in sections)
-            {
-                section.transform.position = random.PointInsideUnitCircle();
-            
-                foreach (DungeonRoom room in section.Rooms)
-                {
-                    room.transform.position = random.PointInsideUnitCircle();
-                }
-            }
-        }
-
         public void DestroyDungeon()
         {
-            sections = new List<DungeonSection>();
+            sections.Clear();
 
             foreach (Transform child in transform)
-                GameObject.Destroy(child.gameObject);
+                DestroyImmediate(child.gameObject);
         }
+
+        public void CreateRooms(List<DungeonRoom> list, DungeonRoomConfiguration config)
+        {
+            for (int i = 0; i < config.minCount; i++)
+                list.Add(InstantiateRoom(config.room));
+
+            for (int i = config.minCount; i < config.maxCount; i++)
+                if (random.Bool(config.probability))
+                    list.Add(InstantiateRoom(config.room));
+        }
+
+        private DungeonRoom InstantiateRoom(DungeonRoom room, Transform parent = null)
+            => Instantiate(room.gameObject, parent != null ? parent : transform)
+               .GetComponent<DungeonRoom>();
     }
 }
