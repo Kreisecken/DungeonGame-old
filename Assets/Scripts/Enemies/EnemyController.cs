@@ -12,11 +12,13 @@ namespace DungeonGame.Enemies
         [Min(0f)] public float hearRange = 5f;
         [Min(0f)] public float seeRange = 10f;
         [Range(0f, 360f)] public float seeAngle = 90f;
-        [Min(0)] public float detectionDelay = 1f; // delay between detections
+        [Min(0f)] public float detectionDelay = 1f; // delay between detections
         
         [Header("Movement")]
         public Rigidbody2D rb;
         public float speed = 3f;
+        [Min(0f)] public float minPlayerDistance = 2f;
+        [Min(0f)] public float maxPlayerDistance = 5f;
         
         public Transform target;
         private float detectionCD = 0f; // seconds since last detection attempt
@@ -47,7 +49,11 @@ namespace DungeonGame.Enemies
             // TODO: implement better path finding
             Vector3 delta = target.position - transform.position;
             orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
-            rb.MovePosition(transform.position + delta.normalized * Time.deltaTime * speed);
+            
+            if(delta.magnitude > maxPlayerDistance)
+                rb.MovePosition(transform.position + delta.normalized * Time.fixedDeltaTime * speed);
+            else if(delta.magnitude < minPlayerDistance)
+                rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
         }
     }
 }
