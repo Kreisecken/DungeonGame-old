@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace DungeonGame.Utils
 {
@@ -23,22 +24,27 @@ namespace DungeonGame.Utils
 
         private long[] state;
 
-        public SeedableRandom()          => Seed = Environment.TickCount;
+        public SeedableRandom() => Seed = Environment.TickCount;
         public SeedableRandom(Seed seed) => Seed = seed;
 
         public float Float()
         {
-            return (float) Int64() / long.MaxValue;
+            return UInt64() / (float) ulong.MaxValue;
+        }
+
+        public float Float(float min, float max)
+        {
+            return Float() * (max - min) + min;
         }
 
         public int Int32()
         {
-            return (int) Int64();
+            return (int)(Int64() & int.MaxValue);
         }
 
         public int Int32(int bound)
         {
-            return Int32() % bound;
+            return (int)(Int32() * ((double)bound / int.MaxValue));
         }
 
         public int Int32(int min, int max)
@@ -48,22 +54,22 @@ namespace DungeonGame.Utils
 
         public long Int64()
         {
-            return (Next() & long.MaxValue);
+            return Next();
+        }
+
+        public ulong UInt64()
+        {
+            return (ulong) Int64();
         }
 
         public long Int64(long bound)
         {
-            return Int64() % bound;
+            return (long)(Int64() * ((double)bound / long.MaxValue));
         }
 
         public long Int64(int min, int max)
         {
             return Int64(max - min + 1) + min;
-        }
-
-        public double Double(double min, double max)
-        {
-            return Float() * (max - min) + min;
         }
 
         public bool Bool(double probability)
@@ -86,7 +92,6 @@ namespace DungeonGame.Utils
             float theta = 2 * Mathf.PI * Float();
             float r = Mathf.Sqrt(Float());
 
-            Debug.Log(Mathf.Cos(theta));
             return new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * r;
         }
 
@@ -96,6 +101,8 @@ namespace DungeonGame.Utils
             for (int i = 0; i < list.Count - 2; i++)
             {
                 int randomIndex = Int32(i, list.Count - 1);
+                Debug.Log("i: " + i + " count: " + list.Count + " random: " + randomIndex);
+
                 (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
             }
         }
@@ -121,20 +128,20 @@ namespace DungeonGame.Utils
 
         private static long Rol64(long x, int k)
         {
-            return (x << k) | ((long) ((ulong) x >> (64 - k)));
+            return (x << k) | ((long)((ulong)x >> (64 - k)));
         }
 
-        public static implicit operator Seed  (SeedableRandom random) => random.Seed;
-        public static implicit operator SeedableRandom(Seed   seed  ) => new(seed);
-        public static implicit operator SeedableRandom(string seed  ) => new((Seed) seed);
-        public static implicit operator SeedableRandom(int    seed  ) => new((Seed) seed);
+        public static implicit operator Seed(SeedableRandom random) => random.Seed;
+        public static implicit operator SeedableRandom(Seed seed) => new(seed);
+        public static implicit operator SeedableRandom(string seed) => new((Seed)seed);
+        public static implicit operator SeedableRandom(int seed) => new((Seed)seed);
     }
 
     public readonly struct Seed
     {
         private readonly long value;
 
-        public Seed(long   seed) => value = seed;
+        public Seed(long seed) => value = seed;
         public Seed(string seed) => value = seed.MD5HashCode();
 
         public long[] CreateState(int length)
@@ -159,8 +166,8 @@ namespace DungeonGame.Utils
             return result;
         }
 
-        public static implicit operator long(Seed   seed) => seed.value;
-        public static implicit operator Seed(long   seed) => new(seed);
+        public static implicit operator long(Seed seed) => seed.value;
+        public static implicit operator Seed(long seed) => new(seed);
         public static implicit operator Seed(string seed) => new(seed);
     }
 }
