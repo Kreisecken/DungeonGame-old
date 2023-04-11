@@ -490,7 +490,9 @@ MonoBehaviour:
   speed: 3
   minPlayerDistance: 2
   maxPlayerDistance: 5
+  weapon: {fileID: 11400000, guid: 2d18601d9925a6f42bf37029f78875e6, type: 2}
   target: {fileID: 1756553400}
+  weaponTrigger: 0
 --- !u!4 &1279435541
 Transform:
   m_ObjectHideFlags: 0

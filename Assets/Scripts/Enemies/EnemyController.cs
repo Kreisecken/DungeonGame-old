@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using DungeonGame.Items;
 
-namespace DungeonGame.Enemies 
+namespace DungeonGame.Enemies
 {
     public class EnemyController : MonoBehaviour
     {
@@ -20,8 +21,15 @@ namespace DungeonGame.Enemies
         [Min(0f)] public float minPlayerDistance = 2f;
         [Min(0f)] public float maxPlayerDistance = 5f;
         
+        [Header("Inventory")]
+        public Weapon weapon;
+        
         public Transform target;
         private float detectionCD = 0f; // seconds since last detection attempt
+        
+        // weapon
+        public bool weaponTrigger = false;
+        private float fireCD = 0f; // fire cool down
         
         private void OnDrawGizmosSelected()
         {
@@ -44,16 +52,36 @@ namespace DungeonGame.Enemies
         
         private void FixedUpdate()
         {
-            if(target == null) return;
+            if(target == null)
+            {
+                weaponTrigger = false;
+                // TODO: implement player detection
+            }
+            else
+            {
+                weaponTrigger = true;
+                
+                // TODO: implement better path finding
+                // movement
+                Vector3 delta = target.position - transform.position;
+                orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+                
+                if(delta.magnitude > maxPlayerDistance)
+                    rb.MovePosition(transform.position + delta.normalized * Time.fixedDeltaTime * speed);
+                else if(delta.magnitude < minPlayerDistance)
+                    rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
+            }
             
-            // TODO: implement better path finding
-            Vector3 delta = target.position - transform.position;
-            orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+            // weapon
+            if(fireCD > 0f) fireCD -= Time.fixedDeltaTime;
             
-            if(delta.magnitude > maxPlayerDistance)
-                rb.MovePosition(transform.position + delta.normalized * Time.fixedDeltaTime * speed);
-            else if(delta.magnitude < minPlayerDistance)
-                rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
+            if(weaponTrigger && fireCD <= 0f && weapon != null)
+            {
+                fireCD += weapon.fireDelay;
+                
+                // fire
+                weapon.spawnProjectile(orientation);
+            }
         }
     }
 }
