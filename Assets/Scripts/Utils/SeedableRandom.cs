@@ -57,11 +57,6 @@ namespace DungeonGame.Utils
             return Next();
         }
 
-        public ulong UInt64()
-        {
-            return (ulong) Int64();
-        }
-
         public long Int64(long bound)
         {
             return (long)(Int64() * ((double)bound / long.MaxValue));
@@ -70,6 +65,11 @@ namespace DungeonGame.Utils
         public long Int64(int min, int max)
         {
             return Int64(max - min + 1) + min;
+        }
+
+        public ulong UInt64()
+        {
+            return (ulong) Int64();
         }
 
         public bool Bool(double probability)
@@ -101,7 +101,6 @@ namespace DungeonGame.Utils
             for (int i = 0; i < list.Count - 2; i++)
             {
                 int randomIndex = Int32(i, list.Count - 1);
-                Debug.Log("i: " + i + " count: " + list.Count + " random: " + randomIndex);
 
                 (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
             }
@@ -134,7 +133,7 @@ namespace DungeonGame.Utils
         public static implicit operator Seed(SeedableRandom random) => random.Seed;
         public static implicit operator SeedableRandom(Seed seed) => new(seed);
         public static implicit operator SeedableRandom(string seed) => new((Seed)seed);
-        public static implicit operator SeedableRandom(int seed) => new((Seed)seed);
+        public static implicit operator SeedableRandom(long seed) => new((Seed)seed);
     }
 
     public readonly struct Seed
