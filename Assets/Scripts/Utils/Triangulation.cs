@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace DungeonGame.Utils
 
     public readonly struct Triangle<T>
     {
-        public readonly Vertex<T> a, b, c;
+        public readonly Vertex<T>[] vertecies;
 
         public readonly (Vector2 center, float radius) circumCircle;
 
@@ -29,9 +30,7 @@ namespace DungeonGame.Utils
 
         public Triangle(Vertex<T> a, Vertex<T> b, Vertex<T> c)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
+            vertecies = new[] { a, b, c };
 
             circumCircle = Triangulation.CircumCircle(a.position, b.position, c.position);
 
@@ -71,6 +70,8 @@ namespace DungeonGame.Utils
         {
             List<Triangle<T>> triangles = new();
 
+            // Add Super Triangle
+
             foreach (var vertex in vertecies)
             {
                 List<Triangle<T>> badTriangles = new();
@@ -83,14 +84,35 @@ namespace DungeonGame.Utils
                     }
                 }
 
-                List<Triangle<T>> polygon = new();
+                List<(Vertex<T> a, Vertex<T> b)> polygon = new();
 
                 foreach (var triangle in badTriangles)
                 {
                     foreach (var edge in triangle.edges)
                     {
-
+                        //if edge is not shared by any other triangles in badTriangles
+                        {
+                            polygon.Add(edge);
+                        }
                     }
+                }
+
+
+                foreach (var badTriangle in badTriangles)
+                    triangles.Remove(badTriangle);
+
+                foreach (var edge in polygon)
+                {
+                    
+                    // form new Triangle and add to triangles
+                }
+            }
+
+            foreach (var triangle in triangles)
+            {
+                //if (triangle.vertecies.Any((vertexA) => superTriangle.vertecies.Any((vertexB) => vertexA == vertexB)))
+                {
+                    triangles.Remove(triangle);
                 }
             }
 

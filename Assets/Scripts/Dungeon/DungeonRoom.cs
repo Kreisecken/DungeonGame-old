@@ -1,4 +1,5 @@
 using DungeonGame.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,39 +12,22 @@ namespace DungeonGame.Dungeon
     {
         public string roomName;
 
-        public DungeonRoomConfiguration config;
+        public DungeonConfiguration config;
         public Dungeon dungeon;
 
         public List<DungeonRoom> neighbours;
 
-        public bool positionFixed;
+        public Collider2D collider2d;
 
-        public List<Collider2D> colliders;
-
-        public Vector3 direction;
-
-        public Vector2 size;
-
-        private void Awake()
+        public void Init(Dungeon dungeon)
         {
-            colliders = new(GetComponents<Collider2D>());
+            this.dungeon = dungeon;
+            this.config = dungeon.config;
         }
 
         public bool Intersects(DungeonRoom room)
         {
-            return GetComponents<Collider2D>().Any((colliderA) =>
-            {
-                return room.GetComponents<Collider2D>().Any((colliderB) =>
-                {
-                    // Collider.Distance does not work here (see ColliderTest)
-                    return colliderA.Distance(colliderB).distance < 0;
-                });
-            });
-        }
-
-        public void Move(float factor)
-        {
-            transform.position += direction * factor;
+            return collider2d.Distance(room.collider2d).distance < dungeon.config.roomSpacing;
         }
     }
 }

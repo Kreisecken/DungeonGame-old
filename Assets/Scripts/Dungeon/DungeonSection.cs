@@ -2,6 +2,7 @@
 using DungeonGame.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using UnityEngine;
 
 namespace DungeonGame.Dungeon
@@ -14,31 +15,48 @@ namespace DungeonGame.Dungeon
 
         public List<DungeonRoom> rooms;
 
-        public void Generate(Dungeon dungeon, List<DungeonRoom> independentRooms, DungeonSectionConfiguration sectionConfig)
+        public void Generate(Dungeon dungeon, DungeonSectionConfiguration sectionConfig, List<DungeonRoom> independentRooms, bool useAll = false)
         {
-            random = dungeon.random;
-            this.sectionConfig = sectionConfig;
+            Init(dungeon, sectionConfig);
 
-            dungeon.CreateRooms(sectionConfig.rooms, ref rooms, transform);
-            UseIndependentRooms(independentRooms);
+            dungeon.CreateRooms(sectionConfig.rooms, rooms, transform);
+            UseIndependentRooms(independentRooms, useAll);
 
             PlaceRoomsRandomly();
-
             SetPositionsOfRooms();
-            //Triangulate();
+            // Triangulate();
+            // SpanningTree();
+            // Corridors(); 
+            // etc.
         }
 
-        public void PlaceRoomsRandomly()
+        public void Init(Dungeon dungeon, DungeonSectionConfiguration sectionConfig)
         {
-            foreach (DungeonRoom room in rooms)
-                room.transform.position = random.PointInsideUnitCircle();
+            this.dungeon = dungeon;
+            this.sectionConfig = sectionConfig;
+            this.random = dungeon.random;
+
+            rooms = new();
         }
 
-        public void UseIndependentRooms(List<DungeonRoom> independentRooms)
+        public void UseIndependentRooms(List<DungeonRoom> independentRooms, bool useAll)
         {
+            if (useAll)
+            {
+                foreach (var room in independentRooms)
+                {
+                    rooms.Add(room);
+                    room.transform.parent = transform;
+                }
+
+                independentRooms.Clear();
+
+                return;
+            }
+
             int count = random.Int32(independentRooms.Count - 1);
 
-            for (int i = 0; i < count; i++)
+            while (count > 0)
             {
                 var independentRoom = independentRooms[0];
                 independentRooms.RemoveAt(0);
@@ -49,34 +67,49 @@ namespace DungeonGame.Dungeon
             }
         }
 
+        public void PlaceRoomsRandomly()
+        {
+            foreach (DungeonRoom room in rooms)
+                room.transform.position = random.PointInsideUnitCircle();
+        }
+
         public void SetPositionsOfRooms()
         {
             rooms.Shuffle(random);
 
-            foreach (var room in rooms)
-                room.direction = random.PointInsideUnitCircle();
+            Physics2D.simulationMode = SimulationMode2D.Script;
 
-            foreach (var room in rooms)
+            List<DungeonRoom> positionatedRooms = new();
+
+            while (rooms.Count > 0)
             {
-                room.positionFixed = true;
+                Vector3 direction = random.PointInsideUnitCircle();
 
-                // maybe redefine direction to a value inside an arc which would not intersect with fixedRooms?
-                // but on a second thought, this does not make sense
+                var room = rooms[0];
 
-                GetIntersectingRooms(room, out var intersectingRooms);
+                room.transform.position = positionatedRooms.Count == 0 ? Vector3.zero : positionatedRooms.GetRandom(random).transform.position;
 
-                foreach (var intersectingRoom in intersectingRooms)
+                List<DungeonRoom> intersectingRooms;
+
+                do
                 {
-                    int iterations = 0;
-                    while (room.Intersects(intersectingRoom) && ++iterations < 1000)
-                        intersectingRoom.Move(random.Float());
+                    room.transform.position += 50 * random.Float() * direction;
+                    Physics2D.Simulate(1f);
 
-                    intersectingRoom.Move(intersectingRoom.size.magnitude * random.Float() * 1.5f);
-                }
+                    GetIntersectingRooms(room, positionatedRooms, out intersectingRooms);
+
+                    Debug.Log(intersectingRooms.Count);
+                } while (intersectingRooms.Count > 0);
+
+                rooms.RemoveAt(0);
+
+                positionatedRooms.Add(room);
             }
+
+            Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
         }
 
-        public void GetIntersectingRooms(DungeonRoom roomA, out List<DungeonRoom> intersectingRooms)
+        public void GetIntersectingRooms(DungeonRoom roomA, List<DungeonRoom> rooms, out List<DungeonRoom> intersectingRooms)
         {
             intersectingRooms = new();
 
@@ -86,6 +119,30 @@ namespace DungeonGame.Dungeon
 
                 if (roomA.Intersects(roomB))
                     intersectingRooms.Add(roomB);
+            }
+        }
+    
+        public void Triangulate()
+        {
+            List<Vertex<DungeonRoom>> vertecies = new();
+
+            foreach (var room in rooms)
+                vertecies.Add(new(room, room.transform.position));
+
+            var triangles = Triangulation.Triangulate(vertecies);
+        
+            foreach (var triangle in triangles)
+            {
+                foreach (var edge in triangle.edges)
+                {
+                    var roomA = edge.a.data;
+                    var roomB = edge.b.data;
+
+                    if (roomA.neighbours.Contains(roomB)) continue;
+
+                    roomA.neighbours.Add(roomB);
+                    roomB.neighbours.Add(roomA);
+                }
             }
         }
     }

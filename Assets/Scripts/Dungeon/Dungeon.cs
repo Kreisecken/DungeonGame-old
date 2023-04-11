@@ -8,7 +8,7 @@ namespace DungeonGame.Dungeon
 {
     public class Dungeon : MonoBehaviour
     {
-        public DungeonConfiguration configuration;
+        public DungeonConfiguration config;
 
         public DungeonRoom startRoom;
          
@@ -18,57 +18,52 @@ namespace DungeonGame.Dungeon
 
         public string seed;
 
+        private static long a = 0;
+
         [ContextMenu("DungeonGenerator/TestGeneration")]
         public void TestGeneration()
         {
-            GenerateDungeon(configuration, seed);
-        }
-
-        [ContextMenu("DungeonGenerator/TestRandom")]
-        public void TestRandom()
-        {
-            random ??= "Hello World";
-
-            Debug.Log(random.Int32(5));
-
-            for (int i = 0; i < 10; i++)
-            {
-                Debug.Log(random.PointInsideUnitCircle());
-            }
+            GenerateDungeon(config, (seed == "" ? a++ : seed.MD5HashCode()));
         }
 
         public void GenerateDungeon(DungeonConfiguration config, SeedableRandom random)
         {
+            // pretty slow and its not even done yet...
+
+            Init(config, random);
+
             DestroyDungeon();
-        
-            this.configuration = config;
-            this.random        = random;
 
             List<DungeonRoom> independentRooms = new();
 
-            CreateRooms(config.independentRooms, ref independentRooms);
+            CreateRooms(config.independentRooms, independentRooms);
 
-            GenerateSections(ref independentRooms);
+            GenerateSections(independentRooms);
         }
 
-        public void CreateRooms(List<DungeonRoomConfiguration> roomConfigs, ref List<DungeonRoom> list, Transform parent = null)
+        public void Init(DungeonConfiguration config, SeedableRandom random)
         {
-            list ??= new();
+            this.config = config;
+            this.random = random;
+        }
 
+        public void CreateRooms(List<DungeonRoomConfiguration> roomConfigs, List<DungeonRoom> list, Transform parent = null)
+        {
             foreach (var roomConfig in roomConfigs)
                 CreateRooms(roomConfig, list, parent);
         }
 
-        public void GenerateSections(ref List<DungeonRoom> independentRooms)
+        public void GenerateSections(List<DungeonRoom> independentRooms)
         {
-            foreach (var sectionConfiguration in configuration.sections)
+            for (int i = 0; i < config.sections.Count; i++)
             {
                 GameObject sectionGameObject = new("section");
+
                 sectionGameObject.transform.parent = transform;
 
-                DungeonSection section = sectionGameObject.AddComponent<DungeonSection>();
+                var section = sectionGameObject.AddComponent<DungeonSection>();
 
-                section.Generate(this, independentRooms, sectionConfiguration);
+                section.Generate(this, config.sections[i], independentRooms, i == config.sections.Count - 1);
 
                 independentRooms.Shuffle(random);
 
@@ -89,20 +84,24 @@ namespace DungeonGame.Dungeon
         public void CreateRooms(DungeonRoomConfiguration config, List<DungeonRoom> list, Transform parent = null)
         {
             for (int i = 0; i < config.minCount; i++)
-                list.Add(InstantiateRoom(config.room, parent));
+                list.Add(InstantiateRoom(config.prefab, parent));
 
             for (int i = config.minCount; i < config.maxCount; i++)
                 if (random.Bool(config.probability))
-                    list.Add(InstantiateRoom(config.room, parent));
+                    list.Add(InstantiateRoom(config.prefab, parent));
         }
 
-        private DungeonRoom InstantiateRoom(DungeonRoom room, Transform parent = null)
+        private DungeonRoom InstantiateRoom(GameObject roomPrefab, Transform parent = null)
         {
-            GameObject gameObject = Instantiate(room.gameObject, parent != null ? parent : transform);
+            GameObject gameObject = Instantiate(roomPrefab, parent != null ? parent : transform);
+
+            DungeonRoom room = gameObject.GetComponent<DungeonRoom>();
+
+            room.Init(this);
 
             gameObject.name = room.name;
 
-            return gameObject.GetComponent<DungeonRoom>();
+            return room;
         }
     }
 }
