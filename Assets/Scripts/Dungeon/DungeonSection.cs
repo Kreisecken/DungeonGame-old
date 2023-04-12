@@ -24,7 +24,7 @@ namespace DungeonGame.Dungeon
 
             PlaceRoomsRandomly();
             SetPositionsOfRooms();
-            // Triangulate();
+            Triangulate();
             // SpanningTree();
             // Corridors(); 
             // etc.
