@@ -23,9 +23,25 @@ namespace DungeonGame.Items
             if(lifeTime > type.maxLifeTime) Destroy(gameObject);
         }
         
-        void OnCollisionStay(Collision collision)
+        void OnCollisionStay2D(Collision2D collision)
         {
-            Debug.Log(collision);
+            // TODO: implement player / enemy damage
+            // damage player / enemy (if one was hit)
+            
+            // aoe
+            if(type.aoe)
+            {
+                Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, type.aoeRadius);
+                foreach(Collider2D c in aoeCollisions)
+                {
+                    if(c.gameObject != collision.gameObject /* && c.gameObject is player / enemy */)
+                    {
+                        // damage player / enemy (c)
+                    }
+                }
+            }
+            
+            Destroy(gameObject);
         }
     }
     
@@ -33,6 +49,10 @@ namespace DungeonGame.Items
     public class ProjectileType : ScriptableObject
     {
         public GameObject prefab;
+        public int damage = 5; // TODO: data type of hp???0
+        public bool aoe = false;
+        public float aoeRadius = 2f;
+        public int aoeDamage = 3;
         [Min(0f)] public float speed = 5f;
         [Min(0f)] public float maxLifeTime = 5f;
     }
