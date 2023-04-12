@@ -23,13 +23,17 @@ namespace DungeonGame.Items
             if(lifeTime > type.maxLifeTime) Destroy(gameObject);
         }
         
+        void OnCollisionStay(Collision collision)
+        {
+            Debug.Log(collision);
+        }
     }
     
     [CreateAssetMenu(fileName = "NewProjectile", menuName = "DungeonGame/Projectile")]
     public class ProjectileType : ScriptableObject
     {
+        public GameObject prefab;
         [Min(0f)] public float speed = 5f;
         [Min(0f)] public float maxLifeTime = 5f;
-        public Sprite sprite;
     }
 }

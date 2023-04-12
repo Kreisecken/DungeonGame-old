@@ -14,13 +14,9 @@ namespace DungeonGame.Items
         public void spawnProjectile(Transform startTransform)
         {
             // TODO: use a GameObject Queue for better performance (?)
-            GameObject go = new GameObject("Projectile");
+            GameObject go = Instantiate(projectileType.prefab);
             go.transform.position = startTransform.position;
             go.transform.rotation = startTransform.rotation;
-            go.AddComponent<SpriteRenderer>();
-            go.GetComponent<SpriteRenderer>().sprite = projectileType.sprite;
-            go.AddComponent<Projectile>();
-            go.GetComponent<Projectile>().type = projectileType;
         }
     }
 }
