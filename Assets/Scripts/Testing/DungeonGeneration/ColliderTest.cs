@@ -22,7 +22,7 @@ namespace DungeonGame.Dungeon
             
             Physics2D.simulationMode = SimulationMode2D.Script;
             Physics2D.Simulate(0.01f);
-            // Not Sure here
+
             Physics2D.simulationMode = SimulationMode2D.FixedUpdate; 
 
             Debug.Log(colliderA.Distance(colliderB).distance);
