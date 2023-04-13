@@ -97,14 +97,14 @@ namespace DungeonGame.Dungeon
                     Physics2D.Simulate(1f);
 
                     GetIntersectingRooms(room, positionatedRooms, out intersectingRooms);
-
-                    Debug.Log(intersectingRooms.Count);
                 } while (intersectingRooms.Count > 0);
 
                 rooms.RemoveAt(0);
 
                 positionatedRooms.Add(room);
             }
+
+            rooms = positionatedRooms;
 
             Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
         }
@@ -121,22 +121,22 @@ namespace DungeonGame.Dungeon
                     intersectingRooms.Add(roomB);
             }
         }
-    
+
+        List<Triangle<DungeonRoom>> triangles;
+
         public void Triangulate()
         {
-            List<Vertex<DungeonRoom>> vertecies = new();
+            triangles = Triangulation.Triangulate(rooms, room => room.transform.position);
 
-            foreach (var room in rooms)
-                vertecies.Add(new(room, room.transform.position));
-
-            var triangles = Triangulation.Triangulate(vertecies);
-        
             foreach (var triangle in triangles)
             {
                 foreach (var edge in triangle.edges)
                 {
                     var roomA = edge.a.data;
                     var roomB = edge.b.data;
+
+                    roomA.triangle = triangle;
+                    roomB.triangle = triangle;
 
                     if (roomA.neighbours.Contains(roomB)) continue;
 
