@@ -19,6 +19,8 @@ namespace DungeonGame.Items
             // TODO: add collisions
             transform.position += transform.right * type.speed * Time.fixedDeltaTime;
             
+            Debug.Log(type.speed);
+            
             lifeTime += Time.fixedDeltaTime;
             if(lifeTime > type.maxLifeTime) Destroy(gameObject);
         }
