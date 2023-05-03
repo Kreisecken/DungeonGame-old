@@ -495,9 +495,8 @@ MonoBehaviour:
   speed: 3
   minPlayerDistance: 2
   maxPlayerDistance: 5
-  weapon: {fileID: 11400000, guid: 2d18601d9925a6f42bf37029f78875e6, type: 2}
+  weaponType: {fileID: 11400000, guid: 2d18601d9925a6f42bf37029f78875e6, type: 2}
   target: {fileID: 1756553400}
-  weaponTrigger: 0
 --- !u!4 &1279435541
 Transform:
   m_ObjectHideFlags: 0
@@ -549,6 +548,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1726634297582964545, guid: a6a17e791384d2e4c9cea43ab096449c, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3145574243147240707, guid: a6a17e791384d2e4c9cea43ab096449c, type: 3}
       propertyPath: m_Name
       value: Player

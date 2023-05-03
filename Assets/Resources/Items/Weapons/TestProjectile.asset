@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:DungeonGame.Items:ProjectileType
   prefab: {fileID: 7540467520291840885, guid: b9e48826be3aea0429fd82451d874aff, type: 3}
   damage: 5
-  speed: 20
+  aoe: 0
+  aoeRadius: 2
+  aoeDamage: 3
+  speed: 9
   maxLifeTime: 5
