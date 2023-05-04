@@ -6,7 +6,7 @@ namespace DungeonGame.Items
 {
     public class Projectile : MonoBehaviour
     {
-        public ProjectileType type;
+        public ProjectileType type { get; }
         private float lifeTime = 0f;
         
         void Start()

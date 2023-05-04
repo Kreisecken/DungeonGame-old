@@ -6,7 +6,7 @@ namespace DungeonGame.Items
 {
     public class Weapon
     {
-        public WeaponType type;
+        public WeaponType type { get; }
         public bool trigger = false;
         private float fireCD = 0f; // fire cool down
         private Transform projectileOrigin;
