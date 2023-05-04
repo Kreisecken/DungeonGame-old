@@ -6,7 +6,7 @@ namespace DungeonGame.Items
 {
     public class Projectile : MonoBehaviour
     {
-        public ProjectileType type { get; }
+        public ProjectileType type;
         private float lifeTime = 0f;
         
         void Start()
@@ -18,8 +18,6 @@ namespace DungeonGame.Items
         {
             // TODO: add collisions
             transform.position += transform.right * type.speed * Time.fixedDeltaTime;
-            
-            Debug.Log(type.speed);
             
             lifeTime += Time.fixedDeltaTime;
             if(lifeTime > type.maxLifeTime) Destroy(gameObject);
