@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Player
+namespace DungeonGame.Player
 {
-    public class Player : MonoBehaviour
+    public class PlayerScript : MonoBehaviour
     {
         [Min(0)] public int maxHealth;
         
