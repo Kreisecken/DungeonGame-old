@@ -17,7 +17,7 @@ namespace DungeonGame.Items
             this.projectileOrigin = projectileOrigin;
         }
         
-        public void weaponUpdate(float deltaTime)
+        public void WeaponUpdate(float deltaTime)
         {
             if(fireCD > 0f) fireCD -= deltaTime;
             
@@ -26,11 +26,11 @@ namespace DungeonGame.Items
                 fireCD += type.fireDelay;
                 
                 // fire
-                spawnProjectile();
+                SpawnProjectile();
             }
         }
         
-        private void spawnProjectile()
+        private void SpawnProjectile()
         {
             // TODO: use a GameObject Queue for better performance (?)
             GameObject go = GameObject.Instantiate(type.projectileType.prefab);

@@ -69,7 +69,7 @@ namespace DungeonGame.Enemies
                     rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
             }
             
-            weapon.weaponUpdate(Time.fixedDeltaTime);
+            weapon.WeaponUpdate(Time.fixedDeltaTime);
         }
     }
 }

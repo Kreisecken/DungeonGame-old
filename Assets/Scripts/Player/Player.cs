@@ -15,7 +15,7 @@ namespace Player
             health = maxHealth;
         }
         
-        public void damage(int dmg)
+        public void Damage(int dmg)
         {
             // TODO: add more damage calculations here (damage type, resistance, ...)
             health -= dmg;
