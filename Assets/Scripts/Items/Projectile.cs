@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DungeonGame.Player;
 
 namespace DungeonGame.Items
 {
@@ -28,20 +29,29 @@ namespace DungeonGame.Items
             // TODO: implement player / enemy damage
             // damage player / enemy (if one was hit)
             
-            // aoe
-            if(type.aoe)
+            // TODO: weapons should be able to damage enemies (-> enum for teams ?)
+            if(collision.gameObject.CompareTag("Player"))
             {
-                Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, type.aoeRadius);
-                foreach(Collider2D c in aoeCollisions)
+                collision.gameObject.GetComponent<PlayerScript>().Damage(type.damage);
+                
+                // aoe
+                if(type.aoe)
                 {
-                    if(c.gameObject != collision.gameObject /* && c.gameObject is player / enemy */)
-                    {
-                        // damage player / enemy (c)
-                    }
+                    DoAOEDamage(collision);
                 }
             }
             
             Destroy(gameObject);
+        }
+        
+        private void DoAOEDamage(Collision2D collision)
+        {
+            Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, type.aoeRadius);
+            foreach(Collider2D c in aoeCollisions)
+            {
+                if(c.gameObject != collision.gameObject && c.gameObject.CompareTag("Player"))
+                    c.gameObject.GetComponent<PlayerScript>().Damage(type.aoeDamage);
+            }
         }
     }
     
