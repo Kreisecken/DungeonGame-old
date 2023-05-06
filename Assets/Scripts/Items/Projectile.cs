@@ -26,9 +26,6 @@ namespace DungeonGame.Items
         
         void OnCollisionStay2D(Collision2D collision)
         {
-            // TODO: implement player / enemy damage
-            // damage player / enemy (if one was hit)
-            
             // TODO: weapons should be able to damage enemies (-> enum for teams ?)
             if(collision.gameObject.CompareTag("Player"))
             {
@@ -59,7 +56,7 @@ namespace DungeonGame.Items
     public class ProjectileType : ScriptableObject
     {
         public GameObject prefab;
-        public int damage = 5; // TODO: data type of hp???0
+        public int damage = 5;
         public bool aoe = false;
         public float aoeRadius = 2f;
         public int aoeDamage = 3;

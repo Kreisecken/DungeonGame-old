@@ -20,7 +20,6 @@ namespace DungeonGame.Player
             // TODO: add more damage calculations here (damage type, resistance, ...)
             health -= dmg;
             
-            // TODO: add death animation here
             if(health <= 0) Destroy(gameObject);
         }
     }
