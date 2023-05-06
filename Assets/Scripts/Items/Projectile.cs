@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DungeonGame.Player;
+using UnityEditor;
 
 namespace DungeonGame.Items
 {
@@ -29,7 +30,7 @@ namespace DungeonGame.Items
             // TODO: weapons should be able to damage enemies (-> enum for teams ?)
             if(collision.gameObject.CompareTag("Player"))
             {
-                collision.gameObject.GetComponent<PlayerScript>().Damage(type.damage);
+                collision.gameObject.GetComponent<PlayerScript>().Damage(type.damage, type.damageType);
                 
                 // aoe
                 if(type.aoe)
@@ -47,7 +48,7 @@ namespace DungeonGame.Items
             foreach(Collider2D c in aoeCollisions)
             {
                 if(c.gameObject != collision.gameObject && c.gameObject.CompareTag("Player"))
-                    c.gameObject.GetComponent<PlayerScript>().Damage(type.aoeDamage);
+                    c.gameObject.GetComponent<PlayerScript>().Damage(type.aoeDamage, type.aoeDamageType);
             }
         }
     }
@@ -56,11 +57,17 @@ namespace DungeonGame.Items
     public class ProjectileType : ScriptableObject
     {
         public GameObject prefab;
+        [Min(0f)] public float speed = 5f;
+        [Min(0f)] public float maxLifeTime = 5f;
+        
+        [Header("Damage")]
         public int damage = 5;
+        public DamageType damageType = DamageType.Magic;
+        
+        [Header("AOE")]
         public bool aoe = false;
         public float aoeRadius = 2f;
         public int aoeDamage = 3;
-        [Min(0f)] public float speed = 5f;
-        [Min(0f)] public float maxLifeTime = 5f;
+        public DamageType aoeDamageType = DamageType.Explosion;
     }
 }
