@@ -57,6 +57,7 @@ namespace DungeonGame.Items
     public class ProjectileType : ScriptableObject
     {
         public Sprite sprite;
+        public Vector2 size;
         [Min(0f)] public float speed = 5f;
         [Min(0f)] public float maxLifeTime = 5f;
         
@@ -82,6 +83,7 @@ namespace DungeonGame.Items
             SpriteRenderer spriteRenderer = g.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = sprite;
             BoxCollider2D collider = g.AddComponent<BoxCollider2D>();
+            collider.size = size;
             Projectile projectileScript = g.AddComponent<Projectile>();
             projectileScript.type = this;
             
