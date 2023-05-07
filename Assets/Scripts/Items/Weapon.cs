@@ -32,10 +32,7 @@ namespace DungeonGame.Items
         
         private void SpawnProjectile()
         {
-            // TODO: use a GameObject Queue for better performance (?)
-            GameObject go = GameObject.Instantiate(type.projectileType.prefab);
-            go.transform.position = projectileOrigin.position;
-            go.transform.rotation = projectileOrigin.rotation;
+            type.projectileType.createProjectile(projectileOrigin);
         }
     }
     
