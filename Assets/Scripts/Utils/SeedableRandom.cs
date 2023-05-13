@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace DungeonGame.Utils
 {
@@ -24,8 +21,8 @@ namespace DungeonGame.Utils
 
         private long[] state;
 
-        public SeedableRandom() => Seed = Environment.TickCount;
-        public SeedableRandom(Seed seed) => Seed = seed;
+        public SeedableRandom()                  => Seed = Environment.TickCount;
+        public SeedableRandom(Seed seed=default) => Seed = seed;
 
         public float Float()
         {
@@ -106,8 +103,56 @@ namespace DungeonGame.Utils
             }
         }
 
-        // xoshiro256ss
         public long Next()
+        {
+            return PRNGAlgorithms.Xoshiro256ss(ref state);
+        }
+
+        public static implicit operator Seed(SeedableRandom random) => random.Seed;
+        public static implicit operator SeedableRandom(Seed seed) => new(seed);
+        public static implicit operator SeedableRandom(string seed) => new((Seed)seed);
+        public static implicit operator SeedableRandom(long seed) => new((Seed)seed);
+    }
+
+    public readonly struct Seed
+    {
+        private readonly long value;
+
+        public Seed(long   seed) => value = seed;
+        public Seed(string seed) => value = seed.MD5HashCode();
+
+        public long[] CreateState(int length)
+        {
+            long[] result = new long[length];
+
+            long state = value;
+
+            for (int i = 0; i < length; i++)
+                result[i] = PRNGAlgorithms.SplitMix64(ref state);
+
+            return result;
+        }
+
+        public static implicit operator long(Seed   seed) => seed.value;
+        public static implicit operator Seed(long   seed) => new(seed);
+        public static implicit operator Seed(string seed) => new(seed);
+    }
+
+    public static class PRNGAlgorithms
+    {
+        public static long SplitMix64(ref long state)
+        {
+            state += -7046029254386353131L;
+
+            long random = state;
+
+            random = (random ^ (random >> 30)) * -4658895280553007687L;
+            random = (random ^ (random >> 27)) * -7723592293110705685L;
+
+            return random ^ (random >> 31);
+        }
+
+        public static long Xoshiro256ss(ref long[] state)
         {
             long result = Rol64(state[1] * 5, 7) * 9;
 
@@ -127,46 +172,7 @@ namespace DungeonGame.Utils
 
         private static long Rol64(long x, int k)
         {
-            return (x << k) | ((long)((ulong)x >> (64 - k)));
+            return (x << k) | ((long) ((ulong) x >> (64 - k)));
         }
-
-        public static implicit operator Seed(SeedableRandom random) => random.Seed;
-        public static implicit operator SeedableRandom(Seed seed) => new(seed);
-        public static implicit operator SeedableRandom(string seed) => new((Seed)seed);
-        public static implicit operator SeedableRandom(long seed) => new((Seed)seed);
-    }
-
-    public readonly struct Seed
-    {
-        private readonly long value;
-
-        public Seed(long seed) => value = seed;
-        public Seed(string seed) => value = seed.MD5HashCode();
-
-        public long[] CreateState(int length)
-        {
-            long[] result = new long[length];
-
-            long state = value;
-
-            // splitmix64
-            for (int i = 0; i < length; i++)
-            {
-                state += -7046029254386353131L;
-
-                long random = state;
-
-                random = (random ^ (random >> 30)) * -4658895280553007687L;
-                random = (random ^ (random >> 27)) * -7723592293110705685L;
-
-                result[i] = random ^ (random >> 31);
-            }
-
-            return result;
-        }
-
-        public static implicit operator long(Seed seed) => seed.value;
-        public static implicit operator Seed(long seed) => new(seed);
-        public static implicit operator Seed(string seed) => new(seed);
     }
 }
