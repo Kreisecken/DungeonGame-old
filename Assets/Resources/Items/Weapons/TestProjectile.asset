@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:DungeonGame.Items:ProjectileType
   sprite: {fileID: 21300000, guid: 713f288c6a6fc4514a9403f26e82dc91, type: 3}
   size: {x: 0.64, y: 0.64}
-  speed: 10
+  speed: 5
   maxLifeTime: 5
   damage: 5
   damageType: 0
