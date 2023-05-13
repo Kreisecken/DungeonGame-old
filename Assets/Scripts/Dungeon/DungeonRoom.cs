@@ -1,4 +1,5 @@
 using DungeonGame.Utils;
+using DungeonGame.Utils.Graph;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace DungeonGame.Dungeon
         public Dungeon dungeon;
 
         public List<DungeonRoom> neighbours;
-        [SerializeField]
+
         public Triangle<DungeonRoom> triangle;
 
         public Collider2D collider2d;

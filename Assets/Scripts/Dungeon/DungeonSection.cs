@@ -1,8 +1,11 @@
 ﻿using DungeonGame.Dungeon;
 using DungeonGame.Utils;
+using DungeonGame.Utils.Graph;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 namespace DungeonGame.Dungeon
@@ -15,8 +18,13 @@ namespace DungeonGame.Dungeon
 
         public List<DungeonRoom> rooms;
 
+        [SerializeField]
+        public Graph<DungeonRoom> graph;
+
         public void Generate(Dungeon dungeon, DungeonSectionConfiguration sectionConfig, List<DungeonRoom> independentRooms, bool useAll = false)
         {
+            graph = new();
+
             Init(dungeon, sectionConfig);
 
             dungeon.CreateRooms(sectionConfig.rooms, rooms, transform);
@@ -24,6 +32,10 @@ namespace DungeonGame.Dungeon
 
             PlaceRoomsRandomly();
             SetPositionsOfRooms();
+
+            foreach (var room in rooms)
+                graph.AddVertex(new(room, room.transform.position));
+
             Triangulate();
             // SpanningTree();
             // Corridors(); 
@@ -38,7 +50,7 @@ namespace DungeonGame.Dungeon
 
             rooms = new();
         }
-
+        
         public void UseIndependentRooms(List<DungeonRoom> independentRooms, bool useAll)
         {
             if (useAll)
@@ -122,12 +134,18 @@ namespace DungeonGame.Dungeon
             }
         }
 
-        List<Triangle<DungeonRoom>> triangles;
-
         public void Triangulate()
         {
-            triangles = Triangulation.Triangulate(rooms, room => room.transform.position);
+            graph.Triangulate();
 
+            foreach (var vertex in graph.vertecies)
+            {
+                Debug.Log(vertex.neighbours.Count);
+                foreach (var neighbour in vertex.neighbours)
+                    vertex.data.neighbours.Add(neighbour.data);
+            }
+
+            /*
             foreach (var triangle in triangles)
             {
                 foreach (var edge in triangle.edges)
@@ -144,6 +162,12 @@ namespace DungeonGame.Dungeon
                     roomB.neighbours.Add(roomA);
                 }
             }
+            */
+        }
+    
+        public void SpanningTree()
+        {
+
         }
     }
 }

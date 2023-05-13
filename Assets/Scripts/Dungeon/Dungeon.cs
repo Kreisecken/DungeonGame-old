@@ -18,12 +18,12 @@ namespace DungeonGame.Dungeon
 
         public string seed;
 
-        private static long a = 0;
+        private static long a;
 
         [ContextMenu("DungeonGenerator/TestGeneration")]
         public void TestGeneration()
         {
-            GenerateDungeon(config, (seed == "" ? a++ : seed.MD5HashCode()));
+            GenerateDungeon(config, seed == "" ? a++ : seed.MD5HashCode());
         }
 
         public void GenerateDungeon(DungeonConfiguration config, SeedableRandom random)
