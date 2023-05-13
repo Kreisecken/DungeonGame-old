@@ -51,12 +51,12 @@ namespace DungeonGame.Enemies
         {
             if(target == null)
             {
-                weapon.trigger = false;
+                if(weapon != null) weapon.trigger = false;
                 // TODO: implement player detection
             }
             else
             {
-                weapon.trigger = true;
+                if(weapon != null) weapon.trigger = true;
                 
                 // TODO: implement better path finding
                 // movement
@@ -69,7 +69,7 @@ namespace DungeonGame.Enemies
                     rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
             }
             
-            weapon.WeaponUpdate(Time.fixedDeltaTime);
+            if(weapon != null) weapon.WeaponUpdate(Time.fixedDeltaTime);
         }
     }
 }
