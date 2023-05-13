@@ -4,19 +4,43 @@ using UnityEngine;
 
 namespace DungeonGame.Items
 {
+    public class Weapon
+    {
+        public WeaponType type { get; }
+        public bool trigger = false;
+        private float fireCD = 0f; // fire cool down
+        private Transform projectileOrigin;
+        
+        public Weapon(WeaponType type, Transform projectileOrigin)
+        {
+            this.type = type;
+            this.projectileOrigin = projectileOrigin;
+        }
+        
+        public void WeaponUpdate(float deltaTime)
+        {
+            if(fireCD > 0f) fireCD -= deltaTime;
+            
+            if(trigger && fireCD <= 0f)
+            {
+                fireCD += type.fireDelay;
+                
+                // fire
+                SpawnProjectile();
+            }
+        }
+        
+        private void SpawnProjectile()
+        {
+            type.projectileType.createProjectile(projectileOrigin);
+        }
+    }
+    
     // TODO: use the inventory system (extend form Item)
     [CreateAssetMenu(fileName = "NewWeapon", menuName = "DungeonGame/Weapon")]
-    public class Weapon : ScriptableObject
+    public class WeaponType : ScriptableObject
     {
         public float fireDelay = 0.5f;
         public ProjectileType projectileType;
-        
-        public void spawnProjectile(Transform startTransform)
-        {
-            // TODO: use a GameObject Queue for better performance (?)
-            GameObject go = Instantiate(projectileType.prefab);
-            go.transform.position = startTransform.position;
-            go.transform.rotation = startTransform.rotation;
-        }
     }
 }

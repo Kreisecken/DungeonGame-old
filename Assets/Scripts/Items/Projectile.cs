@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DungeonGame.Player;
+using UnityEditor;
 
 namespace DungeonGame.Items
 {
@@ -25,35 +27,67 @@ namespace DungeonGame.Items
         
         void OnCollisionStay2D(Collision2D collision)
         {
-            // TODO: implement player / enemy damage
-            // damage player / enemy (if one was hit)
-            
-            // aoe
-            if(type.aoe)
+            // TODO: weapons should be able to damage enemies (-> enum for teams ?)
+            if(collision.gameObject.CompareTag("Player"))
             {
-                Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, type.aoeRadius);
-                foreach(Collider2D c in aoeCollisions)
+                collision.gameObject.GetComponent<PlayerScript>().Damage(type.damage, type.damageType);
+                
+                // aoe
+                if(type.aoe)
                 {
-                    if(c.gameObject != collision.gameObject /* && c.gameObject is player / enemy */)
-                    {
-                        // damage player / enemy (c)
-                    }
+                    DoAOEDamage(collision);
                 }
             }
             
             Destroy(gameObject);
+        }
+        
+        private void DoAOEDamage(Collision2D collision)
+        {
+            Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, type.aoeRadius);
+            foreach(Collider2D c in aoeCollisions)
+            {
+                if(c.gameObject != collision.gameObject && c.gameObject.CompareTag("Player"))
+                    c.gameObject.GetComponent<PlayerScript>().Damage(type.aoeDamage, type.aoeDamageType);
+            }
         }
     }
     
     [CreateAssetMenu(fileName = "NewProjectile", menuName = "DungeonGame/Projectile")]
     public class ProjectileType : ScriptableObject
     {
-        public GameObject prefab;
-        public int damage = 5; // TODO: data type of hp???0
+        public Sprite sprite;
+        public Vector2 size;
+        [Min(0f)] public float speed = 5f;
+        [Min(0f)] public float maxLifeTime = 5f;
+        
+        [Header("Damage")]
+        public int damage = 5;
+        public DamageType damageType = DamageType.Magic;
+        
+        [Header("AOE")]
         public bool aoe = false;
         public float aoeRadius = 2f;
         public int aoeDamage = 3;
-        [Min(0f)] public float speed = 5f;
-        [Min(0f)] public float maxLifeTime = 5f;
+        public DamageType aoeDamageType = DamageType.Explosion;
+        
+        public GameObject createProjectile(Transform origin)
+        {
+            // TODO: use a GameObject Queue for better performance (?)
+            // add Projectile GameObject
+            GameObject g = new GameObject("Projectile");
+            g.transform.position = origin.position;
+            g.transform.rotation = origin.rotation;
+            
+            // add components
+            SpriteRenderer spriteRenderer = g.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = sprite;
+            BoxCollider2D collider = g.AddComponent<BoxCollider2D>();
+            collider.size = size;
+            Projectile projectileScript = g.AddComponent<Projectile>();
+            projectileScript.type = this;
+            
+            return null;
+        }
     }
 }

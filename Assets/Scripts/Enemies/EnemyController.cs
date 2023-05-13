@@ -22,14 +22,11 @@ namespace DungeonGame.Enemies
         [Min(0f)] public float maxPlayerDistance = 5f;
         
         [Header("Inventory")]
-        public Weapon weapon;
+        public WeaponType weaponType;
         
+        private Weapon weapon;
         public Transform target;
         private float detectionCD = 0f; // seconds since last detection attempt
-        
-        // weapon
-        public bool weaponTrigger = false;
-        private float fireCD = 0f; // fire cool down
         
         private void OnDrawGizmosSelected()
         {
@@ -47,19 +44,19 @@ namespace DungeonGame.Enemies
         
         private void Start()
         {
-            
+            weapon = new Weapon(weaponType, orientation);
         }
         
         private void FixedUpdate()
         {
             if(target == null)
             {
-                weaponTrigger = false;
+                if(weapon != null) weapon.trigger = false;
                 // TODO: implement player detection
             }
             else
             {
-                weaponTrigger = true;
+                if(weapon != null) weapon.trigger = true;
                 
                 // TODO: implement better path finding
                 // movement
@@ -72,16 +69,7 @@ namespace DungeonGame.Enemies
                     rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
             }
             
-            // weapon
-            if(fireCD > 0f) fireCD -= Time.fixedDeltaTime;
-            
-            if(weaponTrigger && fireCD <= 0f && weapon != null)
-            {
-                fireCD += weapon.fireDelay;
-                
-                // fire
-                weapon.spawnProjectile(orientation);
-            }
+            if(weapon != null) weapon.WeaponUpdate(Time.fixedDeltaTime);
         }
     }
 }
