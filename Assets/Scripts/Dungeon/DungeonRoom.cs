@@ -1,4 +1,6 @@
 using DungeonGame.Utils;
+using DungeonGame.Utils.Graph;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,39 +13,40 @@ namespace DungeonGame.Dungeon
     {
         public string roomName;
 
-        public DungeonRoomConfiguration config;
+        public DungeonConfiguration config;
         public Dungeon dungeon;
 
         public List<DungeonRoom> neighbours;
 
-        public bool positionFixed;
+        public Triangle<DungeonRoom> triangle;
 
-        public List<Collider2D> colliders;
+        public Collider2D collider2d;
 
-        public Vector3 direction;
-
-        public Vector2 size;
-
-        private void Awake()
+        public void Init(Dungeon dungeon)
         {
-            colliders = new(GetComponents<Collider2D>());
+            this.dungeon = dungeon;
+            this.config = dungeon.config;
         }
 
         public bool Intersects(DungeonRoom room)
         {
-            return GetComponents<Collider2D>().Any((colliderA) =>
-            {
-                return room.GetComponents<Collider2D>().Any((colliderB) =>
-                {
-                    // Collider.Distance does not work here (see ColliderTest)
-                    return colliderA.Distance(colliderB).distance < 0;
-                });
-            });
+            return collider2d.Distance(room.collider2d).distance < dungeon.config.roomSpacing;
         }
 
-        public void Move(float factor)
+        private void OnDrawGizmos()
         {
-            transform.position += direction * factor;
+            foreach (var neighbour in neighbours)
+            {
+                Gizmos.DrawLine(transform.position, neighbour.transform.position);
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (triangle == null) return;
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(triangle.circumCircle.center, triangle.circumCircle.radius);
         }
     }
 }

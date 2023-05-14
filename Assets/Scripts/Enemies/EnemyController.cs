@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using DungeonGame.Items;
 
-namespace DungeonGame.Enemies 
+namespace DungeonGame.Enemies
 {
     public class EnemyController : MonoBehaviour
     {
@@ -20,6 +21,10 @@ namespace DungeonGame.Enemies
         [Min(0f)] public float minPlayerDistance = 2f;
         [Min(0f)] public float maxPlayerDistance = 5f;
         
+        [Header("Inventory")]
+        public WeaponType weaponType;
+        
+        private Weapon weapon;
         public Transform target;
         private float detectionCD = 0f; // seconds since last detection attempt
         
@@ -39,21 +44,32 @@ namespace DungeonGame.Enemies
         
         private void Start()
         {
-            
+            weapon = new Weapon(weaponType, orientation);
         }
         
         private void FixedUpdate()
         {
-            if(target == null) return;
+            if(target == null)
+            {
+                if(weapon != null) weapon.trigger = false;
+                // TODO: implement player detection
+            }
+            else
+            {
+                if(weapon != null) weapon.trigger = true;
+                
+                // TODO: implement better path finding
+                // movement
+                Vector3 delta = target.position - transform.position;
+                orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+                
+                if(delta.magnitude > maxPlayerDistance)
+                    rb.MovePosition(transform.position + delta.normalized * Time.fixedDeltaTime * speed);
+                else if(delta.magnitude < minPlayerDistance)
+                    rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
+            }
             
-            // TODO: implement better path finding
-            Vector3 delta = target.position - transform.position;
-            orientation.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
-            
-            if(delta.magnitude > maxPlayerDistance)
-                rb.MovePosition(transform.position + delta.normalized * Time.fixedDeltaTime * speed);
-            else if(delta.magnitude < minPlayerDistance)
-                rb.MovePosition(transform.position - delta.normalized * Time.fixedDeltaTime * speed);
+            if(weapon != null) weapon.WeaponUpdate(Time.fixedDeltaTime);
         }
     }
 }

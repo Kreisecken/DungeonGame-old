@@ -12,6 +12,9 @@ namespace DungeonGame.Dungeon
     {
         public string dungeonName;
 
+        [Min(0)]
+        public float roomSpacing;
+
         public List<DungeonRoomConfiguration> independentRooms;
 
         public List<DungeonSectionConfiguration> sections;
@@ -20,7 +23,7 @@ namespace DungeonGame.Dungeon
     [Serializable]
     public class DungeonRoomConfiguration
     {
-        public DungeonRoom room;
+        public GameObject prefab;
 
         public int minCount;
         public int maxCount;
