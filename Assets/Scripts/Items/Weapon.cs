@@ -6,14 +6,14 @@ namespace DungeonGame.Items
 {
     public class Weapon
     {
-        public WeaponType type { get; }
+        public WeaponProperties properties { get; }
         public bool trigger = false;
         private float fireCD = 0f; // fire cool down
         private Transform projectileOrigin;
         
-        public Weapon(WeaponType type, Transform projectileOrigin)
+        public Weapon(WeaponProperties properties, Transform projectileOrigin)
         {
-            this.type = type;
+            this.properties = properties;
             this.projectileOrigin = projectileOrigin;
         }
         
@@ -23,7 +23,7 @@ namespace DungeonGame.Items
             
             if(trigger && fireCD <= 0f)
             {
-                fireCD += type.fireDelay;
+                fireCD += properties.fireDelay;
                 
                 // fire
                 SpawnProjectile();
@@ -32,15 +32,7 @@ namespace DungeonGame.Items
         
         private void SpawnProjectile()
         {
-            type.projectileType.createProjectile(projectileOrigin);
+            properties.projectileType.createProjectile(projectileOrigin);
         }
-    }
-    
-    // TODO: use the inventory system (extend form Item)
-    [CreateAssetMenu(fileName = "NewWeapon", menuName = "DungeonGame/Weapon")]
-    public class WeaponType : ScriptableObject
-    {
-        public float fireDelay = 0.5f;
-        public ProjectileType projectileType;
     }
 }

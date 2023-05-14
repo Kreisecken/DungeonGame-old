@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5ef5c1b6bc00bf644bd528c35a29557c, type: 3}
   m_Name: TestWeapon
   m_EditorClassIdentifier: Assembly-CSharp:DungeonGame.Items:WeaponType
   fireDelay: 0.5

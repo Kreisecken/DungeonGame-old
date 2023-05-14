@@ -22,7 +22,7 @@ namespace DungeonGame.Enemies
         [Min(0f)] public float maxPlayerDistance = 5f;
         
         [Header("Inventory")]
-        public WeaponType weaponType;
+        public WeaponProperties weaponProperties;
         
         private Weapon weapon;
         public Transform target;
@@ -44,7 +44,7 @@ namespace DungeonGame.Enemies
         
         private void Start()
         {
-            weapon = new Weapon(weaponType, orientation);
+            weapon = new Weapon(weaponProperties, orientation);
         }
         
         private void FixedUpdate()

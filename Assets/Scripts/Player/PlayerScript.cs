@@ -9,7 +9,7 @@ namespace DungeonGame.Player
     {
         [Min(0)] public int maxHealth;
         public Transform weaponDirection;
-        public WeaponType testWeaponTypeBecauseWeaponsCanNotBeCollectedYet;
+        public WeaponProperties testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet;
         
         private int health;
         private Weapon weapon;
@@ -19,7 +19,7 @@ namespace DungeonGame.Player
             health = maxHealth;
             
             // TODO: collect weapons instead of just having them
-            //weapon = new Weapon(testWeaponTypeBecauseWeaponsCanNotBeCollectedYet, weaponDirection);
+            //weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection);
         }
         
         void FixedUpdate()
