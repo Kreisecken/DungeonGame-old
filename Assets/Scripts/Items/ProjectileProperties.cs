@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DungeonGame.Enemies;
 
 namespace DungeonGame.Items
 {
@@ -22,7 +23,7 @@ namespace DungeonGame.Items
         public int aoeDamage = 3;
         public DamageType aoeDamageType = DamageType.Explosion;
         
-        public GameObject createProjectile(Transform origin)
+        public GameObject createProjectile(Transform origin, Team originTeam)
         {
             // TODO: use a GameObject Queue for better performance (?)
             // add Projectile GameObject
@@ -37,6 +38,7 @@ namespace DungeonGame.Items
             collider.size = size;
             Projectile projectileScript = g.AddComponent<Projectile>();
             projectileScript.properties = this;
+            projectileScript.originTeam = originTeam;
             
             return null;
         }

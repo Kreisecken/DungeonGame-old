@@ -48,7 +48,7 @@ namespace DungeonGame.Items
         
         private void SpawnProjectile()
         {
-            properties.projectileType.createProjectile(projectileOrigin);
+            properties.projectileType.createProjectile(projectileOrigin, ownerTeam);
         }
     }
 }
