@@ -8,6 +8,8 @@ namespace DungeonGame.Enemies
 {
     public class EnemyController : MonoBehaviour
     {
+        public Team team = Team.Enemies;
+        
         [Header("Player Detection")]
         public Transform orientation;
         [Min(0f)] public float hearRange = 5f;
@@ -44,7 +46,7 @@ namespace DungeonGame.Enemies
         
         private void Start()
         {
-            weapon = new Weapon(weaponProperties, orientation);
+            weapon = new Weapon(weaponProperties, orientation, team);
         }
         
         private void FixedUpdate()

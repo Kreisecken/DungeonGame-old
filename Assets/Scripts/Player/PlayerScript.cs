@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DungeonGame.Items;
+using DungeonGame.Enemies;
 
 namespace DungeonGame.Player
 {
     public class PlayerScript : MonoBehaviour
     {
         [Min(0)] public int maxHealth;
+        public Team team = Team.Player;
         public Transform weaponDirection;
         public WeaponProperties testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet;
         
@@ -19,7 +21,7 @@ namespace DungeonGame.Player
             health = maxHealth;
             
             // TODO: collect weapons instead of just having them
-            //weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection);
+            weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, team);
         }
         
         void FixedUpdate()
