@@ -36,6 +36,7 @@ namespace DungeonGame.Items
             spriteRenderer.sprite = sprite;
             BoxCollider2D collider = g.AddComponent<BoxCollider2D>();
             collider.size = size;
+            collider.isTrigger = true;
             Projectile projectileScript = g.AddComponent<Projectile>();
             projectileScript.properties = this;
             projectileScript.originTeam = originTeam;

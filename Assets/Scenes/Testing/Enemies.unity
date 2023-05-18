@@ -517,6 +517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c5fe22798c6366408243331be34bec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  team: 1
   orientation: {fileID: 790380654}
   hearRange: 3
   seeRange: 10
@@ -712,5 +713,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 20
+  team: 0
   weaponDirection: {fileID: 58231179}
-  testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet: {fileID: 0}
+  testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet: {fileID: 11400000, guid: 2d18601d9925a6f42bf37029f78875e6, type: 2}
