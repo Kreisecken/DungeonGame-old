@@ -42,13 +42,13 @@ namespace DungeonGame.Items
                 fireCD += properties.fireDelay;
                 
                 // fire
-                SpawnProjectile();
+                Shoot();
             }
         }
         
-        protected void SpawnProjectile()
+        protected void Shoot()
         {
-            properties.projectileType.createProjectile(projectileOrigin, ownerTeam);
+            properties.projectileType.CreateProjectile(projectileOrigin, ownerTeam);
         }
     }
 }

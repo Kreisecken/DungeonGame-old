@@ -29,7 +29,7 @@ namespace DungeonGame.Items
         
         void OnTriggerStay2D(Collider2D collider)
         {
-            // TODO: use a seperate class for bein in a team for both players and enemies (?)
+            // TODO: use a seperate class for being in a team for both players and enemies (?)
             
             if(collider.gameObject.TryGetComponent<PlayerScript>(out PlayerScript ps))
             {
@@ -54,7 +54,7 @@ namespace DungeonGame.Items
             Destroy(gameObject);
         }
         
-        private void DoAOEDamage(Collider2D collider)
+        protected void DoAOEDamage(Collider2D collider)
         {
             Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, properties.aoeRadius);
             foreach(Collider2D c in aoeCollisions)
