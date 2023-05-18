@@ -46,7 +46,7 @@ namespace DungeonGame.Items
             }
         }
         
-        private void SpawnProjectile()
+        protected void SpawnProjectile()
         {
             properties.projectileType.createProjectile(projectileOrigin, ownerTeam);
         }
