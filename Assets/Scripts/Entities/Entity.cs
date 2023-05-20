@@ -12,17 +12,22 @@ namespace DungeonGame.Enemies
         
         protected int health;
         
-        void Start()
+        protected void Start()
         {
             health = maxHealth;
         }
         
-        public void Damage(int amount, DamageType damageType)
+        public bool Damage(int amount, DamageType damageType, Team originTeam)
         {
+            // return false if Entity is dead oder in the team of the damage source
+            if(health <= 0 || originTeam == team) return false;
+            
             // TODO: add more damage calculations here (damage type, resistance, ...)
             health -= amount;
             
             if(health <= 0) Destroy(gameObject);
+            
+            return true;
         }
     }
 }

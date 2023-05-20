@@ -29,29 +29,18 @@ namespace DungeonGame.Items
         
         void OnTriggerStay2D(Collider2D collider)
         {
-            // TODO: use a seperate class for being in a team for both players and enemies (?)
-            
-            if(collider.gameObject.TryGetComponent<PlayerScript>(out PlayerScript ps))
+            // check if an Entity was hit
+            if(collider.gameObject.TryGetComponent<Entity>(out Entity entity))
             {
-                if(ps.team == originTeam) return;
-                
-                ps.Damage(properties.damage, properties.damageType);
-                
-                // aoe
-                if(properties.aoe) DoAOEDamage(collider);
+                if(entity.Damage(properties.damage, properties.damageType, originTeam))
+                {
+                    // aoe
+                    if(properties.aoe) DoAOEDamage(collider);
+                    
+                    // remove projectile
+                    Destroy(gameObject);
+                }
             }
-            else if(collider.gameObject.TryGetComponent<EnemyController>(out EnemyController ec))
-            {
-                if(ec.team == originTeam) return;
-                
-                // TODO: enemy damage
-                //ec.Damage(properties.damage, properties.damageType);
-                
-                // aoe
-                if(properties.aoe) DoAOEDamage(collider);
-            }
-            
-            Destroy(gameObject);
         }
         
         protected void DoAOEDamage(Collider2D collider)
@@ -59,17 +48,13 @@ namespace DungeonGame.Items
             Collider2D[] aoeCollisions = Physics2D.OverlapCircleAll(transform.position, properties.aoeRadius);
             foreach(Collider2D c in aoeCollisions)
             {
+                // don't apply aoe damage to the directly hit Entity
                 if(c.gameObject == collider.gameObject) continue;
                 
-                if(c.gameObject.TryGetComponent<PlayerScript>(out PlayerScript ps))
+                if(collider.gameObject.TryGetComponent<Entity>(out Entity entity))
                 {
-                    if(ps.team != originTeam) ps.Damage(properties.aoeDamage, properties.aoeDamageType);
+                    entity.Damage(properties.aoeDamage, properties.aoeDamageType, originTeam);
                 }
-                
-                /*else if(c.gameObject.TryGetComponent<EnemyController>(out EnemyController ec))
-                {
-                    if(ec.team != originTeam) ec.Damage(properties.aoeDamage, properties.aoeDamageType);
-                }*/
             }
         }
     }

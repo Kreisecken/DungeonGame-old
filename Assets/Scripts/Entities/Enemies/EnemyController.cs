@@ -28,7 +28,7 @@ namespace DungeonGame.Enemies
         public Transform target;
         private float detectionCD = 0f; // seconds since last detection attempt
         
-        private void OnDrawGizmosSelected()
+        void OnDrawGizmosSelected()
         {
             if(orientation == null) return;
             
@@ -42,8 +42,10 @@ namespace DungeonGame.Enemies
             Handles.DrawLine(orientation.position, orientation.position + rightPoint * seeRange);
         }
         
-        private void Start()
+        new void Start()
         {
+            base.Start();
+            
             weapon = new Weapon(weaponProperties, orientation, team);
         }
         

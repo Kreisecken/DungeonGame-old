@@ -13,8 +13,10 @@ namespace DungeonGame.Player
         
         private Weapon weapon;
         
-        void Start()
+        new void Start()
         {
+            base.Start();
+            
             // TODO: collect weapons instead of just having them
             weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, team);
         }
