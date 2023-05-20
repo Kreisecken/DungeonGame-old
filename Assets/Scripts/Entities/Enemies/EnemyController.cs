@@ -6,10 +6,8 @@ using DungeonGame.Items;
 
 namespace DungeonGame.Enemies
 {
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : Entity
     {
-        public Team team = Team.Enemies;
-        
         [Header("Player Detection")]
         public Transform orientation;
         [Min(0f)] public float hearRange = 5f;

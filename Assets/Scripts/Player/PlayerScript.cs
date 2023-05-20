@@ -6,20 +6,15 @@ using DungeonGame.Enemies;
 
 namespace DungeonGame.Player
 {
-    public class PlayerScript : MonoBehaviour
+    public class PlayerScript : Entity
     {
-        [Min(0)] public int maxHealth;
-        public Team team = Team.Player;
         public Transform weaponDirection;
         public WeaponProperties testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet;
         
-        private int health;
         private Weapon weapon;
         
         void Start()
         {
-            health = maxHealth;
-            
             // TODO: collect weapons instead of just having them
             weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, team);
         }
@@ -27,14 +22,6 @@ namespace DungeonGame.Player
         void FixedUpdate()
         {
             if(weapon != null) weapon.WeaponUpdate(Time.fixedDeltaTime);
-        }
-        
-        public void Damage(int amount, DamageType damageType)
-        {
-            // TODO: add more damage calculations here (damage type, resistance, ...)
-            health -= amount;
-            
-            if(health <= 0) Destroy(gameObject);
         }
         
         public void SetWeaponTrigger(bool trigger)
