@@ -9,7 +9,7 @@ namespace DungeonGame.Items
     {
         public WeaponProperties properties { get; }
         public bool trigger = false;
-        private Team ownerTeam;
+        private Entity owner;
         private bool isHeld = false;
         private float fireCD = 0f; // fire cool down
         private Transform projectileOrigin;
@@ -18,18 +18,19 @@ namespace DungeonGame.Items
         {
             this.properties = properties;
             isHeld = false;
+            owner = null;
         }
         
-        public Weapon(WeaponProperties properties, Transform projectileOrigin, Team ownerTeam)
+        public Weapon(WeaponProperties properties, Transform projectileOrigin, Entity owner)
         {
             this.properties = properties;
-            PickUp(projectileOrigin, ownerTeam);
+            PickUp(projectileOrigin, owner);
         }
         
-        public void PickUp(Transform projectileOrigin, Team ownerTeam)
+        public void PickUp(Transform projectileOrigin, Entity owner)
         {
             this.projectileOrigin = projectileOrigin;
-            this.ownerTeam = ownerTeam;
+            this.owner = owner;
             isHeld = true;
         }
         
@@ -48,7 +49,7 @@ namespace DungeonGame.Items
         
         protected void Shoot()
         {
-            properties.projectileType.CreateProjectile(projectileOrigin, ownerTeam);
+            properties.projectileType.CreateProjectile(projectileOrigin, owner.team);
         }
     }
 }

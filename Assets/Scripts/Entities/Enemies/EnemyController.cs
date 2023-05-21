@@ -46,7 +46,7 @@ namespace DungeonGame.Enemies
         {
             base.Start();
             
-            weapon = new Weapon(weaponProperties, orientation, team);
+            weapon = new Weapon(weaponProperties, orientation, this);
         }
         
         private void FixedUpdate()

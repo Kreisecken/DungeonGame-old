@@ -18,7 +18,7 @@ namespace DungeonGame.Player
             base.Start();
             
             // TODO: collect weapons instead of just having them
-            weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, team);
+            weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, this);
         }
         
         void FixedUpdate()
