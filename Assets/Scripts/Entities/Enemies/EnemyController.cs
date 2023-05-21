@@ -54,7 +54,13 @@ namespace DungeonGame.Enemies
             if(target == null)
             {
                 if(weapon != null) weapon.trigger = false;
-                // TODO: implement player detection
+                
+                detectionCD += Time.fixedDeltaTime;
+                if(detectionCD >= detectionDelay)
+                {
+                    detectionCD = 0f;
+                    target = Detect();
+                }
             }
             else
             {
@@ -72,6 +78,36 @@ namespace DungeonGame.Enemies
             }
             
             if(weapon != null) weapon.WeaponUpdate(Time.fixedDeltaTime);
+        }
+        
+        protected Transform Detect()
+        {
+            // detection by hearing
+            Collider2D[] hearColliders = Physics2D.OverlapCircleAll(transform.position, hearRange);
+            foreach(Collider2D c in hearColliders)
+            {
+                if(!c.gameObject.TryGetComponent<Entity>(out Entity e)) continue;
+                if(e.team == team) continue;
+                
+                return e.transform;
+            }
+            
+            // detection by seeing
+            Collider2D[] seeColliders = Physics2D.OverlapCircleAll(transform.position, seeRange);
+            foreach(Collider2D c in seeColliders)
+            {
+                if(!c.gameObject.TryGetComponent<Entity>(out Entity e)) continue;
+                if(e.team == team) continue;
+                
+                // check angle to player
+                Vector2 delta = c.transform.position - transform.position;
+                float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
+                if(Mathf.Abs(angle) > seeAngle) continue;
+                
+                return e.transform;
+            }
+            
+            return null;
         }
     }
 }
