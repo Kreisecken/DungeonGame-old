@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace DungeonGame.Dungeon
 {
     public class Dungeon : MonoBehaviour
     {
         public DungeonConfiguration config;
-
+         
         public DungeonRoom startRoom;
          
         public List<DungeonSection> sections;
@@ -17,6 +18,8 @@ namespace DungeonGame.Dungeon
         public SeedableRandom random;
 
         public string seed;
+
+        public Tilemap tileMap;
 
         private static long a;
 
@@ -39,6 +42,10 @@ namespace DungeonGame.Dungeon
             CreateRooms(config.independentRooms, independentRooms);
 
             GenerateSections(independentRooms);
+
+            MergeTilemaps();
+
+            CreateCorridors();
         }
 
         public void Init(DungeonConfiguration config, SeedableRandom random)
@@ -102,6 +109,71 @@ namespace DungeonGame.Dungeon
             gameObject.name = room.name;
 
             return room;
+        }
+    
+        public void MergeTilemaps()
+        {
+            GameObject tileMapGameObject = Instantiate(config.tileMapPrefab, transform);
+
+            tileMap = tileMapGameObject.GetComponentInChildren<Tilemap>();
+
+            foreach (var dungeonSection in sections)
+            {
+                foreach (var dungeonRoom in dungeonSection.rooms)
+                {
+                    foreach (var position in dungeonRoom.tileMap.cellBounds.allPositionsWithin)
+                    {
+                        if (!dungeonRoom.tileMap.HasTile(position)) continue;
+
+                        Vector3 translatedPosition = position + dungeonRoom.transform.position;
+                        Debug.Log(dungeonRoom.tileMap.GetTile(position));
+                        tileMap.SetTile(new Vector3Int((int) translatedPosition.x, (int) translatedPosition.y, 0), dungeonRoom.tileMap.GetTile(position));
+                    }
+
+                    // TODO: remove TileMap Children
+                }
+            }
+        }
+     
+        public void CreateCorridors()
+        {
+            foreach (var dungeonSection in sections)
+            {
+                foreach (var edge in dungeonSection.graph.edges)
+                {
+                    var a = edge.a.data;
+                    var b = edge.b.data;
+
+                    Vector3Int position = new((int)a.transform.position.x, (int)a.transform.position.y);
+                    Vector3Int neighbourPosition = new((int)b.transform.position.x, (int)b.transform.position.y);
+
+                    Vector3Int direction = new
+                    (
+                        -Math.Sign(a.transform.position.x - b.transform.position.x),
+                        -Math.Sign(a.transform.position.y - b.transform.position.y)
+                    );
+
+                    Vector3Int length = new
+                    (
+                        Math.Abs(position.x - neighbourPosition.x),
+                        Math.Abs(position.y - neighbourPosition.y)
+                    );
+
+                    for (int x = 0; x < length.x; x++)
+                    {
+                        position.x += direction.x;
+
+                        tileMap.SetTile(position, config.tile);
+                    }
+
+                    for (int y = 0; y < length.y; y++)
+                    {
+                        position.y += direction.y;
+
+                        tileMap.SetTile(position, config.tile);
+                    }
+                }
+            }
         }
     }
 }
