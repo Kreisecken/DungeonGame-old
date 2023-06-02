@@ -13,26 +13,17 @@ MonoBehaviour:
   m_Name: TestConfiguration
   m_EditorClassIdentifier: 
   dungeonName: 
-  roomSpacing: 2
+  roomSpacing: 4.5
   independentRooms: []
   sections:
   - dungeonSectionName: TestSection
+    cycles: 0.195
     rooms:
-    - prefab: {fileID: 1935065787581138270, guid: 781c2906ec4462d4ca2a3ef5aa71aea1, type: 3}
+    - prefab: {fileID: 7871351393021022216, guid: 50b1b47226a7c3b469ad8ca70b41116c, type: 3}
       minCount: 1
-      maxCount: 24
+      maxCount: 131
       probability: 1
       isStartRoom: 1
       isSectorConnection: 1
-    - prefab: {fileID: 1935065787581138270, guid: b3668c3035e0d1246b263e38e147ea4b, type: 3}
-      minCount: 1
-      maxCount: 17
-      probability: 0.994
-      isStartRoom: 1
-      isSectorConnection: 1
-    - prefab: {fileID: 1935065787581138270, guid: 477de6c32d57e7c49a6eb2287623234b, type: 3}
-      minCount: 1
-      maxCount: 15
-      probability: 0.969
-      isStartRoom: 1
-      isSectorConnection: 1
+  tileMapPrefab: {fileID: 3394599391951676381, guid: 56109e3801e69af4b9bf4a4f49816b1c, type: 3}
+  tile: {fileID: 11400000, guid: 238e8ed9dbf2aac42a0c1c96e38bad8d, type: 2}
