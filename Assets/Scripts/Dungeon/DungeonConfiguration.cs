@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace DungeonGame.Dungeon
 {
@@ -18,6 +19,10 @@ namespace DungeonGame.Dungeon
         public List<DungeonRoomConfiguration> independentRooms;
 
         public List<DungeonSectionConfiguration> sections;
+
+        public GameObject tileMapPrefab;
+
+        public TileBase tile;
     }
 
     [Serializable]
@@ -40,6 +45,9 @@ namespace DungeonGame.Dungeon
     {
         // maybe too much, but maybe define for this min, max and probability?
         public string dungeonSectionName;
+
+        [Range(0, 1)]
+        public float cycles;
 
         public List<DungeonRoomConfiguration> rooms;
     }
