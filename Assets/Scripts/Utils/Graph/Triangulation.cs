@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace DungeonGame.Utils.Graph
 {
+    // sources:
+    // https://www.youtube.com/watch?v=4ySSsESzw2Y
+    // https://www.wikiwand.com/en/Bowyer%E2%80%93Watson_algorithm
+    // https://www.gorillasun.de/blog/bowyer-watson-algorithm-for-delaunay-triangulation/
     public static class Triangulation
     {
         // TODO: refactor and fix problems - put parts of algorithm in own methods for readability purposes
@@ -13,40 +18,37 @@ namespace DungeonGame.Utils.Graph
             // maybe resolve this edge case in dungeon generation
             if (graph.Count < 3) return;
 
-            var vertecies = graph.vertecies;
+            var supraTriangle = CreateSupraTriangle(graph.vertecies);
 
-            var supraTriangle = CreateSupraTriangle(vertecies);
-
-            var triangles = CreateTriangles(vertecies, supraTriangle);
+            var triangles = CreateTriangles(graph.vertecies, supraTriangle);
 
             triangles = GetUnconnectedTriangles(triangles, supraTriangle);
 
             foreach (var triangle in triangles)
             {
-                triangle.A.AddEdge(triangle.AB);
-                triangle.A.AddEdge(triangle.AC);
+                graph.AddVertex(triangle.A);
+                graph.AddVertex(triangle.B);
+                graph.AddVertex(triangle.C);
 
-                triangle.B.AddEdge(triangle.AB);
-                triangle.B.AddEdge(triangle.BC);
-
-                triangle.C.AddEdge(triangle.BC);
-                triangle.C.AddEdge(triangle.AC);
+                graph.AddEdge(triangle.AB);
+                graph.AddEdge(triangle.BC);
+                graph.AddEdge(triangle.AC);
             }
         }
 
-        public static Triangle<T> CreateSupraTriangle<T>(List<Vertex<T>> vertecies)
+        public static Triangle<T> CreateSupraTriangle<T>(IEnumerable<Vertex<T>> vertecies)
         {
             // calculate bounding box
             // TODO: separate this part into its own method (?)
-            Vector2 min = new(vertecies[0].position.x, vertecies[0].position.y);
-            Vector2 max = new(vertecies[0].position.x, vertecies[0].position.y);
+            Vector2 min = Vector2.zero;
+            Vector2 max = Vector2.zero;
 
-            for (var i = 1; i < vertecies.Count; i++)
+            foreach (var vertex in vertecies)
             {
-                if (vertecies[i].position.x < min.x) min.x = vertecies[i].position.x;
-                if (vertecies[i].position.y < min.y) min.y = vertecies[i].position.y;
-                if (vertecies[i].position.x > max.x) max.x = vertecies[i].position.x;
-                if (vertecies[i].position.y > max.y) max.y = vertecies[i].position.y;
+                if (vertex.position.x < min.x) min.x = vertex.position.x;
+                if (vertex.position.y < min.y) min.y = vertex.position.y;
+                if (vertex.position.x > max.x) max.x = vertex.position.x;
+                if (vertex.position.y > max.y) max.y = vertex.position.y;
             }
 
             // TODO: this is a rough aproximation for a supra triangle, a lot of room for optimization
@@ -71,15 +73,15 @@ namespace DungeonGame.Utils.Graph
             );
         }
 
-        public static List<Triangle<T>> CreateTriangles<T>(List<Vertex<T>> vertecies, Triangle<T> supraTriangle)
+        public static List<Triangle<T>> CreateTriangles<T>(IEnumerable<Vertex<T>> vertecies, Triangle<T> supraTriangle)
         {
             List<Triangle<T>> triangles = new() { supraTriangle };
-
+            
             foreach (var vertex in vertecies)
             {
-                var badTriangles = GetBadTriangles(triangles, vertex);
-
                 List<Edge<T>> polygon = new();
+
+                var badTriangles = GetBadTriangles(triangles, vertex);
 
                 AddNotSharedEdgesToPolygon(badTriangles, polygon);
 
@@ -87,54 +89,10 @@ namespace DungeonGame.Utils.Graph
                     triangles.Remove(badTriangle);
 
                 foreach (var edge in polygon)
-                {
                     triangles.Add(new(vertex, edge.a, edge.b));
-                }
             }
 
             return triangles;
-        }
-
-
-        public static bool DoesAnyTriangleShareEdge<T>(List<Triangle<T>> triangles, Triangle<T> triangle, Edge<T> edge)
-        {
-            foreach (var triangleToCheck in triangles)
-            {
-                if (triangle == triangleToCheck) continue;
-
-                if (triangleToCheck.HasEdge(edge))
-                    return true;
-            }
-
-            return false;
-        }
-
-        public static void AddNotSharedEdgesToPolygon<T>(List<Triangle<T>> triangles, List<Edge<T>> polygon)
-        {
-            foreach (var triangle in triangles)
-            {
-                foreach (var edge in triangle.edges)
-                {
-                    if (!DoesAnyTriangleShareEdge(triangles, triangle, edge))
-                        polygon.Add(edge);
-                }
-            }
-        }
-
-        public static List<Triangle<T>> GetUnconnectedTriangles<T>(List<Triangle<T>> triangles, Triangle<T> supraTriangle)
-        {
-            List<Triangle<T>> trianglesWithoutByProducts = new();
-
-            foreach (var triangle in triangles)
-            {
-                // TODO: optimizable by using the property of the supratriangle, that the vertecie data attribute is null
-                if (!triangle.HasAnyVertexOfTriangle(supraTriangle))
-                {
-                    trianglesWithoutByProducts.Add(triangle);
-                }
-            }
-
-            return trianglesWithoutByProducts;
         }
 
         public static List<Triangle<T>> GetBadTriangles<T>(List<Triangle<T>> triangles, Vertex<T> vertex)
@@ -150,6 +108,48 @@ namespace DungeonGame.Utils.Graph
             }
 
             return badTriangles;
+        }
+
+        public static void AddNotSharedEdgesToPolygon<T>(List<Triangle<T>> badTriangles, List<Edge<T>> polygon)
+        {
+            foreach (var triangle in badTriangles)
+            {
+                foreach (var edge in triangle.edges)
+                {
+                    if (!DoesAnyTriangleShareEdge(badTriangles, triangle, edge))
+                        polygon.Add(edge);
+                }
+            }
+        }
+
+        public static bool DoesAnyTriangleShareEdge<T>(List<Triangle<T>> badTriangles, Triangle<T> badTriangle, Edge<T> edge)
+        {
+            foreach (var triangleToCheck in badTriangles)
+            {
+                if (triangleToCheck == badTriangle) continue;
+
+                if (triangleToCheck.HasEdge(edge))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static List<Triangle<T>> GetUnconnectedTriangles<T>(List<Triangle<T>> triangles, Triangle<T> supraTriangle)
+        {
+            List<Triangle<T>> unconnectedTriangles = new();
+
+            foreach (var triangle in triangles)
+            {
+                // TODO: optimizable by using the property of the supratriangle, that the vertecie data attribute is null
+                //if (!triangle.HasVertex(null))
+                if (!triangle.HasAnyVertexOfTriangle(supraTriangle))
+                {
+                    unconnectedTriangles.Add(triangle);
+                }
+            }
+
+            return unconnectedTriangles;
         }
     }
 }
