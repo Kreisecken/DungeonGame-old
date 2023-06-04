@@ -1,12 +1,14 @@
 ﻿using DungeonGame.Dungeon;
 using DungeonGame.Utils;
 using DungeonGame.Utils.Graph;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace DungeonGame.Dungeon
 {
@@ -21,6 +23,12 @@ namespace DungeonGame.Dungeon
         [SerializeField]
         public Graph<DungeonRoom> graph;
 
+        [ContextMenu("Update")]
+        public void Refresh()
+        {
+            graph.Refresh();
+        }
+
         public void Generate(Dungeon dungeon, DungeonSectionConfiguration sectionConfig, List<DungeonRoom> independentRooms, bool useAll = false)
         {
             graph = new();
@@ -28,18 +36,21 @@ namespace DungeonGame.Dungeon
             Init(dungeon, sectionConfig);
 
             dungeon.CreateRooms(sectionConfig.rooms, rooms, transform);
-            UseIndependentRooms(independentRooms, useAll);
+            UseIndependentRooms(independentRooms, useAll); // seems to take a while
 
-            PlaceRoomsRandomly();
             SetPositionsOfRooms();
 
             foreach (var room in rooms)
-                graph.AddVertex(new(room, room.transform.position));
+            {
+                Vector3 floored = new ((int) room.transform.position.x, (int) room.transform.position.y);
+                room.transform.position = floored;
+                graph.AddVertex(new(room, floored));
+            }
 
             Triangulate();
-            // SpanningTree();
-            // Corridors(); 
-            // etc.
+            RemoveSomeEdges();
+
+            ApplyGraphToRooms();
         }
 
         public void Init(Dungeon dungeon, DungeonSectionConfiguration sectionConfig)
@@ -79,13 +90,7 @@ namespace DungeonGame.Dungeon
             }
         }
 
-        public void PlaceRoomsRandomly()
-        {
-            foreach (DungeonRoom room in rooms)
-                room.transform.position = random.PointInsideUnitCircle();
-        }
-
-        public void SetPositionsOfRooms()
+        public void SetPositionsOfRooms() // slowest
         {
             rooms.Shuffle(random);
 
@@ -101,21 +106,20 @@ namespace DungeonGame.Dungeon
 
                 room.transform.position = positionatedRooms.Count == 0 ? Vector3.zero : positionatedRooms.GetRandom(random).transform.position;
 
-                List<DungeonRoom> intersectingRooms;
-
                 do
                 {
-                    room.transform.position += 50 * random.Float() * direction;
+                    room.transform.position += 50 * random.Float32() * direction;
+                    Vector3 floored = new((int)room.transform.position.x, (int)room.transform.position.y);
+                    room.transform.position = floored;
+
                     Physics2D.Simulate(1f);
-
-                    GetIntersectingRooms(room, positionatedRooms, out intersectingRooms);
-                } while (intersectingRooms.Count > 0);
-
+                } while (room.IntersectsWithAnyRoom(positionatedRooms));
+                
                 rooms.RemoveAt(0);
 
                 positionatedRooms.Add(room);
             }
-
+            
             rooms = positionatedRooms;
 
             Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
@@ -137,37 +141,31 @@ namespace DungeonGame.Dungeon
         public void Triangulate()
         {
             graph.Triangulate();
-
-            foreach (var vertex in graph.vertecies)
-            {
-                Debug.Log(vertex.neighbours.Count);
-                foreach (var neighbour in vertex.neighbours)
-                    vertex.data.neighbours.Add(neighbour.data);
-            }
-
-            /*
-            foreach (var triangle in triangles)
-            {
-                foreach (var edge in triangle.edges)
-                {
-                    var roomA = edge.a.data;
-                    var roomB = edge.b.data;
-
-                    roomA.triangle = triangle;
-                    roomB.triangle = triangle;
-
-                    if (roomA.neighbours.Contains(roomB)) continue;
-
-                    roomA.neighbours.Add(roomB);
-                    roomB.neighbours.Add(roomA);
-                }
-            }
-            */
         }
     
-        public void SpanningTree()
+        public void RemoveSomeEdges()
         {
+            foreach (var edge in graph.edges)
+            {
+                edge.weight = (edge.a.position - edge.b.position).magnitude;
+            }
 
+            List<Edge<DungeonRoom>> removedEdges = graph.MinimumSpanningTree().ToList();
+
+            for (int i = 0, count = (int)(random.Float32() * sectionConfig.cycles * removedEdges.Count); i < count; i++)
+                graph.AddEdge(removedEdges.GetAndRemoveRandom(random));
+        }
+    
+        public void ApplyGraphToRooms()
+        {
+            foreach (var (vertex, edges) in graph.edgesMap)
+            {
+                foreach (var edge in edges)
+                {
+                    vertex.data.neighbours.Add(edge.a.data);
+                    vertex.data.neighbours.Add(edge.b.data);
+                }
+            }
         }
     }
 }
