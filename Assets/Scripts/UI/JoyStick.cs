@@ -46,7 +46,7 @@ namespace DungeonGame.InputSystem
             innerPart.transform.position = center + position;
         }
 
-        /// EditorUtilities
+        // EditorUtilities
 
         [ContextMenu("Set center to outerpart position")]
         public void SetCenterToOuterPartPosition()
