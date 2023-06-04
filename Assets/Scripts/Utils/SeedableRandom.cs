@@ -1,5 +1,7 @@
-﻿using System;
+﻿using DungeonGame.Utils.Graph;
+using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace DungeonGame.Utils
@@ -24,24 +26,34 @@ namespace DungeonGame.Utils
         public SeedableRandom()                  => Seed = Environment.TickCount;
         public SeedableRandom(Seed seed=default) => Seed = seed;
 
-        public float Float()
+        public float Float32()
         {
-            return UInt64() / (float) ulong.MaxValue;
+            return (float) Int32() / int.MaxValue;
         }
 
-        public float Float(float min, float max)
+        public float Float32(float min, float max)
         {
-            return Float() * (max - min) + min;
+            return Float32() * (max - min) + min;
+        }
+
+        public double Float64()
+        {
+            return (double) UInt64() / ulong.MaxValue;
+        }
+
+        public double Float64(double min, double max)
+        { 
+            return Float64() * (max - min + 1) + min;
         }
 
         public int Int32()
         {
-            return (int)(Int64() & int.MaxValue);
+            return (int) (Int64() & int.MaxValue);
         }
 
         public int Int32(int bound)
         {
-            return (int)(Int32() * ((double)bound / int.MaxValue));
+            return (int)(Int32() * ((double) bound / int.MaxValue));
         }
 
         public int Int32(int min, int max)
@@ -56,7 +68,7 @@ namespace DungeonGame.Utils
 
         public long Int64(long bound)
         {
-            return (long)(Int64() * ((double)bound / long.MaxValue));
+            return (long)(Int64() * ((double) bound / long.MaxValue));
         }
 
         public long Int64(int min, int max)
@@ -71,7 +83,7 @@ namespace DungeonGame.Utils
 
         public bool Bool(double probability)
         {
-            return Float() < probability;
+            return Float64() < probability; // TODO: 32 or 64? should work fine for now
         }
 
         public string String(int length, char[] charSet)
@@ -86,10 +98,20 @@ namespace DungeonGame.Utils
 
         public Vector2 PointInsideUnitCircle()
         {
-            float theta = 2 * Mathf.PI * Float();
-            float r = Mathf.Sqrt(Float());
+            return PointInsideCircle(Circle.UNIT_CIRCLE);
+        }
 
-            return new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * r;
+        public Vector2 PointInsideCircle(Circle circle)
+        {
+            return PointInsideCircle(circle.center, circle.radius);
+        }
+
+        public Vector2 PointInsideCircle(Vector2 center, float radius)
+        {
+            float theta = 2 * Mathf.PI * Float32();
+            float r = radius * Mathf.Sqrt(Float32());
+
+            return center + new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * r;
         }
 
         // Fisher-Yates shuffle
@@ -109,9 +131,9 @@ namespace DungeonGame.Utils
         }
 
         public static implicit operator Seed(SeedableRandom random) => random.Seed;
-        public static implicit operator SeedableRandom(Seed seed) => new(seed);
+        public static implicit operator SeedableRandom(Seed   seed) => new(seed);
         public static implicit operator SeedableRandom(string seed) => new((Seed)seed);
-        public static implicit operator SeedableRandom(long seed) => new((Seed)seed);
+        public static implicit operator SeedableRandom(long   seed) => new((Seed)seed);
     }
 
     public readonly struct Seed
