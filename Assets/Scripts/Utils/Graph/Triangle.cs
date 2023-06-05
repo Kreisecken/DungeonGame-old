@@ -7,26 +7,26 @@ namespace DungeonGame.Utils.Graph
     [Serializable]
     public class Triangle<T>
     {
-        public Vertex<T>[] vertecies;
-        public Edge<T>[] edges;
+        public Vertex3<T>[] vertecies;
+        public Edge3<T>[] edges;
 
-        public Vertex<T> A => vertecies[0];
-        public Vertex<T> B => vertecies[1];
-        public Vertex<T> C => vertecies[2];
+        public Vertex3<T> A => vertecies[0];
+        public Vertex3<T> B => vertecies[1];
+        public Vertex3<T> C => vertecies[2];
 
-        public Edge<T> AB => edges[0];
-        public Edge<T> AC => edges[1];
-        public Edge<T> BC => edges[2];
+        public Edge3<T> AB => edges[0];
+        public Edge3<T> AC => edges[1];
+        public Edge3<T> BC => edges[2];
 
         public Circle circumCircle;
 
-        public Triangle(Vertex<T> a, Vertex<T> b, Vertex<T> c)
+        public Triangle(Vertex3<T> a, Vertex3<T> b, Vertex3<T> c)
         {
             (a, b, c) = SortVerteciesClockwise(a, b, c);
 
-            vertecies = new Vertex<T>[] { a, b, c };
+            vertecies = new Vertex3<T>[] { a, b, c };
 
-            edges = new Edge<T>[3]
+            edges = new Edge3<T>[3]
             {
                 new(a, b, 0),
                 new(a, c, 0),
@@ -36,7 +36,7 @@ namespace DungeonGame.Utils.Graph
             circumCircle = Circle.CalculateCircumCircle(a.position, b.position, c.position);
         }
 
-        public bool HasVertex(Vertex<T> vertex)
+        public bool HasVertex(Vertex3<T> vertex)
         {
             return A == vertex || B == vertex || C == vertex;
         }
@@ -46,7 +46,7 @@ namespace DungeonGame.Utils.Graph
             return HasVertex(triangle.A) || HasVertex(triangle.B) || HasVertex(triangle.C);
         }
 
-        public bool HasEdge(Edge<T> edge)
+        public bool HasEdge(Edge3<T> edge)
         {
             return AB == edge || AC == edge || BC == edge;
         }
@@ -75,7 +75,7 @@ namespace DungeonGame.Utils.Graph
         public static bool operator ==(Triangle<T> lh, Triangle<T> rh) =>  lh.Equals(rh);
         public static bool operator !=(Triangle<T> lh, Triangle<T> rh) => !lh.Equals(rh);
     
-        public static (Vertex<T> a, Vertex<T> b, Vertex<T> c) SortVerteciesClockwise(Vertex<T> a, Vertex<T> b, Vertex<T> c)
+        public static (Vertex3<T> a, Vertex3<T> b, Vertex3<T> c) SortVerteciesClockwise(Vertex3<T> a, Vertex3<T> b, Vertex3<T> c)
         {
             // not the best implementation, but should work for now
 
