@@ -7,15 +7,14 @@ using Unity.VisualScripting;
 
 namespace DungeonGame.Utils.Graph
 {
-    [Serializable]
-    public class Edge<T>
+    public class BaseEdge<TVertex, TData> where TVertex : Vertex<TData>
     {
-        public Vertex<T> a;
-        public Vertex<T> b;
+        public TVertex a;
+        public TVertex b;
 
         public float weight;
 
-        public Edge(Vertex<T> a, Vertex<T> b, float weight)
+        public BaseEdge(TVertex a, TVertex b, float weight)
         {
             this.a = a;
             this.b = b;
@@ -24,8 +23,8 @@ namespace DungeonGame.Utils.Graph
 
             this.weight = weight;
         }
-        
-        public bool HasVertex(Vertex<T> vertex)
+
+        public bool HasVertex(TVertex vertex)
         {
             return a == vertex || b == vertex;
         }
@@ -37,16 +36,28 @@ namespace DungeonGame.Utils.Graph
 
         public override bool Equals(object obj)
         {
-            if (obj is not Edge<T> edge) return false;
+            if (obj is not BaseEdge<TVertex, TData> edge) return false;
 
             return a == edge.a && b == edge.b || a == edge.b && b == edge.a;
         }
 
         public override int GetHashCode() => base.GetHashCode();
 
-        public static bool operator ==(Edge<T> lh, Edge<T> rh) => lh.Equals(rh);
-        public static bool operator !=(Edge<T> lh, Edge<T> rh) => !lh.Equals(rh);
+        public static bool operator ==(BaseEdge<TVertex, TData> lh, BaseEdge<TVertex, TData> rh) => lh.Equals(rh);
+        public static bool operator !=(BaseEdge<TVertex, TData> lh, BaseEdge<TVertex, TData> rh) => !lh.Equals(rh);
 
-        public static implicit operator float(Edge<T> vertex) => vertex.weight;
+        public static implicit operator float(BaseEdge<TVertex, TData> vertex) => vertex.weight;
+    }
+  
+    [Serializable]
+    public class Edge<TData> : BaseEdge<Vertex<TData>, TData>
+    {
+        public Edge(Vertex<TData> a, Vertex<TData> b, float weight) : base(a, b, weight) { }
+    }
+
+    [Serializable]
+    public class Edge3<TData> : BaseEdge<Vertex3<TData>, TData>
+    {
+        public Edge3(Vertex3<TData> a, Vertex3<TData> b, float weight) : base(a, b, weight) { }
     }
 }
