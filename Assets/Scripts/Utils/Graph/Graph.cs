@@ -8,17 +8,18 @@ using System.Linq;
 namespace DungeonGame.Utils.Graph
 {
     [Serializable]
-    public class Graph<T>
+    public class BaseGraph<TVertex, TEdge, TData> where TVertex : Vertex<TData> where TEdge : BaseEdge<TVertex, TData>
     {
-        public HashSet<Vertex<T>> vertecies;
+        public HashSet<TVertex> vertecies;
 
         public int Count => vertecies.Count;
 
-        public Dictionary<Vertex<T>, HashSet<Edge<T>>> edgesMap;
-        public HashSet<Edge<T>> edges;
+        public Dictionary<TVertex, HashSet<TEdge>> edgesMap;
+        public HashSet<TEdge> edges;
 
         #region DEBUGGING
-        public List<Vertex<T>> list;
+
+        public List<TVertex> list;
 
         public void Refresh()
         {
@@ -32,7 +33,7 @@ namespace DungeonGame.Utils.Graph
 
         #endregion DEBUGGING
 
-        public Graph(HashSet<Vertex<T>> vertecies = null)
+        public BaseGraph(HashSet<TVertex> vertecies = null)
         {
             this.vertecies = vertecies ?? new();
 
@@ -40,24 +41,19 @@ namespace DungeonGame.Utils.Graph
             edgesMap = new();
         }
 
-        public void Triangulate()
-        {
-            Triangulation.Triangulate(this);
-        }
-
         // https://www.wikiwand.com/de/Algorithmus_von_Kruskal
         // without any thinking implemented. Works but needs to be looked at again.
         // mhm, reafactor it lalter, it realy is ugly
-        public HashSet<Edge<T>> MinimumSpanningTree()
+        public HashSet<TEdge> MinimumSpanningTree()
         {
             // Create a list to store the minimum spanning tree edges
-            List<Edge<T>> minimumSpanningTree = new();
+            List<TEdge> minimumSpanningTree = new();
 
             // Create a dictionary to track the parent of each vertex in the tree
-            Dictionary<Vertex<T>, Vertex<T>> parent = new();
+            Dictionary<TVertex, TVertex> parent = new();
 
             // Create a dictionary to track the rank of each vertex in the tree
-            Dictionary<Vertex<T>, int> rank = new();
+            Dictionary<TVertex, int> rank = new();
 
             // Initialize the parent and rank dictionaries
             foreach (var vertex in vertecies)
@@ -67,7 +63,7 @@ namespace DungeonGame.Utils.Graph
             }
 
             // Sort all edges in ascending order by weight
-            List<Edge<T>> sortedEdges = edges.ToList();
+            List<TEdge> sortedEdges = edges.ToList();
             sortedEdges.Sort((a, b) => a.weight.CompareTo(b.weight));
 
             // Process each edge in the sorted order
@@ -99,17 +95,17 @@ namespace DungeonGame.Utils.Graph
                 }
             }
 
-            HashSet<Edge<T>> removedEdges = edges.Where((edge) => !minimumSpanningTree.Contains(edge)).ToHashSet();
+            HashSet<TEdge> removedEdges = edges.Where((edge) => !minimumSpanningTree.Contains(edge)).ToHashSet();
 
             // Update the edges of the graph to contain only the minimum spanning tree edges
-            edges = new HashSet<Edge<T>>(minimumSpanningTree);
+            edges = new HashSet<TEdge>(minimumSpanningTree);
 
             // Update the edges map
             edgesMap.Clear();
 
             foreach (var vertex in vertecies)
             {
-                edgesMap[vertex] = new HashSet<Edge<T>>();
+                edgesMap[vertex] = new HashSet<TEdge>();
             }
 
             foreach (var edge in edges)
@@ -121,9 +117,9 @@ namespace DungeonGame.Utils.Graph
             return removedEdges;
         }
 
-        private Vertex<T> FindRoot(Vertex<T> vertex, Dictionary<Vertex<T>, Vertex<T>> parent)
+        private TVertex FindRoot(TVertex vertex, Dictionary<TVertex, TVertex> parent)
         {
-            Stack<Vertex<T>> stack = new();
+            Stack<TVertex> stack = new();
 
             while (parent[vertex] != vertex)
             {
@@ -137,14 +133,14 @@ namespace DungeonGame.Utils.Graph
             return vertex;
         }
 
-        public void AddVertex(Vertex<T> vertex)
+        public void AddVertex(TVertex vertex)
         {
             if (!vertecies.Add(vertex)) return;
 
             edgesMap.Add(vertex, new());
         }
 
-        public void RemoveVertex(Vertex<T> vertex)
+        public void RemoveVertex(TVertex vertex)
         {
             if (!vertecies.Remove(vertex)) return;
 
@@ -158,9 +154,9 @@ namespace DungeonGame.Utils.Graph
             }
         }
 
-        public void AddEdge(Edge<T> edge)
+        public void AddEdge(TEdge edge)
         {
-            if (!vertecies.Contains(edge.a)) AddVertex(edge.a);
+            if (!vertecies.Contains(edge.a)) AddVertex(edge.a); // these are HashSets, no need to check anything
             if (!vertecies.Contains(edge.b)) AddVertex(edge.b);
 
             if (!edges.Add(edge)) return;
@@ -172,7 +168,7 @@ namespace DungeonGame.Utils.Graph
             b.Add(edge);
         }
 
-        public void RemoveEdge(Edge<T> edge)
+        public void RemoveEdge(TEdge edge)
         {
             if (!vertecies.Contains(edge.a) || !vertecies.Contains(edge.b)) return;
 
@@ -184,5 +180,17 @@ namespace DungeonGame.Utils.Graph
             a.Add(edge);
             b.Add(edge);
         }
+    }
+
+    [Serializable]
+    public class Graph<TData> : BaseGraph<Vertex<TData>, Edge<TData>, TData>
+    {
+        public Graph(HashSet<Vertex<TData>> vertecies = null) : base(vertecies) { }
+    }
+
+    [Serializable]
+    public class Graph3<TData> : BaseGraph<Vertex3<TData>, Edge3<TData>, TData>
+    {
+        public Graph3(HashSet<Vertex3<TData>> vertecies = null) : base(vertecies) { }
     }
 } 
