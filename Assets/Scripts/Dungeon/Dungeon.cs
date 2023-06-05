@@ -119,19 +119,19 @@ namespace DungeonGame.Dungeon
 
             foreach (var dungeonSection in sections)
             {
-                foreach (var dungeonRoom in dungeonSection.rooms)
+                foreach (var position in dungeonSection.tileMap.cellBounds.allPositionsWithin)
                 {
-                    foreach (var position in dungeonRoom.tileMap.cellBounds.allPositionsWithin)
-                    {
-                        if (!dungeonRoom.tileMap.HasTile(position)) continue;
+                    if (!dungeonSection.tileMap.HasTile(position)) continue;
 
-                        Vector3 translatedPosition = position + dungeonRoom.transform.position;
-                        Debug.Log(dungeonRoom.tileMap.GetTile(position));
-                        tileMap.SetTile(new Vector3Int((int) translatedPosition.x, (int) translatedPosition.y, 0), dungeonRoom.tileMap.GetTile(position));
-                    }
-
-                    // TODO: remove TileMap Children
+                    Vector3 translatedPosition = position + dungeonSection.transform.position;
+                    Debug.Log(dungeonSection.tileMap.GetTile(position));
+                    tileMap.SetTile(new Vector3Int((int) translatedPosition.x, (int) translatedPosition.y, 0), dungeonSection.tileMap.GetTile(position));
                 }
+
+                // TODO: change to Destroy()
+                DestroyImmediate(dungeonSection.tileMap.gameObject.transform.parent.gameObject);
+
+                dungeonSection.tileMap = tileMap;
             }
         }
      
@@ -144,13 +144,18 @@ namespace DungeonGame.Dungeon
                     var a = edge.a.data;
                     var b = edge.b.data;
 
-                    Vector3Int position = new((int)a.transform.position.x, (int)a.transform.position.y);
-                    Vector3Int neighbourPosition = new((int)b.transform.position.x, (int)b.transform.position.y);
+                    var connection = a.relations.GetConnection(b);
+
+                    Vector3 A = connection.A == a ? connection.AConnectionPoint : connection.BConnectionPoint;
+                    Vector3 B = connection.A == a ? connection.BConnectionPoint : connection.AConnectionPoint;
+
+                    Vector3Int position = new((int)Mathf.Round(A.x), (int)Mathf.Round(A.y));
+                    Vector3Int neighbourPosition = new((int)Mathf.Round(B.x), (int)Mathf.Round(B.y));
 
                     Vector3Int direction = new
                     (
-                        -Math.Sign(a.transform.position.x - b.transform.position.x),
-                        -Math.Sign(a.transform.position.y - b.transform.position.y)
+                        -Math.Sign(position.x - neighbourPosition.x),
+                        -Math.Sign(position.y - neighbourPosition.y)
                     );
 
                     Vector3Int length = new
@@ -159,6 +164,40 @@ namespace DungeonGame.Dungeon
                         Math.Abs(position.y - neighbourPosition.y)
                     );
 
+
+                    // Bresenham's line algorithm
+
+                    int x0 = position.x;
+                    int y0 = position.y;
+                    int x1 = neighbourPosition.x;
+                    int y1 = neighbourPosition.y;
+
+                    int dx =  Math.Abs(x1 - x0);
+                    int dy = -Math.Abs(y1 - y0);
+                
+                    int sx = x0 < x1 ? 1 : -1;
+                    int sy = y0 < y1 ? 1 : -1;
+
+                    int err = dx + dy;
+                    int e2  = 0;
+                    
+                    int x = x0;
+                    int y = y0;
+
+                    while (true)
+                    {
+                        //image.drawPixel(x, y, z, color);
+                        tileMap.SetTile(new Vector3Int(x, y, 0), config.tile);
+
+                        if (x == x1 && y == y1) break;
+
+                        e2 = err * 2;
+                        
+                        if (e2 > dy) { err += dy; x += sx; }
+                        if (e2 < dx) { err += dx; y += sy; }
+                    }
+
+                    /*
                     for (int x = 0; x < length.x; x++)
                     {
                         position.x += direction.x;
@@ -172,6 +211,7 @@ namespace DungeonGame.Dungeon
 
                         tileMap.SetTile(position, config.tile);
                     }
+                    */
                 }
             }
         }
