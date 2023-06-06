@@ -6,21 +6,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace DungeonGame.Dungeon
+namespace DungeonGame.Dungeons
 {
-    [Serializable, CreateAssetMenu(menuName = "DungeonGame/DungeonConfiguration")]
+    [Serializable, CreateAssetMenu(menuName = "DungeonGame/Create DungeonConfiguration")]
     public class DungeonConfiguration : ScriptableObject
     {
+        [Header("Data")]
+        
         public string dungeonName;
+        //public string dungeonDescription; etc...
+
+        [Header("Generation Optiones")]
+
+        public DungeonPrefab dungeonPrefab;
 
         [Min(0)]
-        public float roomSpacing;
+        public float roomSpacingMin;
+        [Min(0)]
+        public float rommSpacingMax;
 
-        public List<DungeonRoomConfiguration> independentRooms;
+        [Range(0, 1)]
+        public float cycles;
 
-        public List<DungeonSectionConfiguration> sections;
+        [Header("Rooms")]
 
-        public GameObject tileMapPrefab;
+        public List<DungeonRoomConfiguration> rooms;
+        
+        [Header("Sub Dungeons")]
+
+        public List<DungeonConfiguration> subDungeons;
+
+        //public int orderOfCompletion;
+
+        [Header("Tilemap Configuration")]
 
         public TileBase tile;
     }
@@ -28,7 +46,13 @@ namespace DungeonGame.Dungeon
     [Serializable]
     public class DungeonRoomConfiguration
     {
-        public GameObject prefab;
+        [Header("Data")]
+
+        public string roomName;
+
+        public DungeonRoomPrefab roomPrefab;
+
+        [Header("Generation Options")]
 
         public int minCount;
         public int maxCount;
@@ -36,19 +60,12 @@ namespace DungeonGame.Dungeon
         [Range(0, 1)]
         public float probability;
 
-        public bool isStartRoom;
-        public bool isSectorConnection;
-    }
+        [Header("Flags")]
 
-    [Serializable]
-    public class DungeonSectionConfiguration
-    {
-        // maybe too much, but maybe define for this min, max and probability?
-        public string dungeonSectionName;
+        public bool isStartRoom;          // is this one of the possible starting rooms?
+        public bool isDungeonConnection;  // is this room a connection to another dungeon? 
+        //public bool isIndepentent;        // is this room independent from the rest of the dungeon? implement later if necessary
 
-        [Range(0, 1)]
-        public float cycles;
-
-        public List<DungeonRoomConfiguration> rooms;
+        public bool isNormalRoom => !isStartRoom && !isDungeonConnection;
     }
 }
