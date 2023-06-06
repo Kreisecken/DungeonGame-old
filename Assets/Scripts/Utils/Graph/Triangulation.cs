@@ -11,7 +11,7 @@ namespace DungeonGame.Utils.Graph
     public static class Triangulation
     {
         // TODO: refactor and fix problems - put parts of algorithm in own methods for readability purposes
-        public static void Triangulate<T>(Graph<T> graph)
+        public static void Triangulate<T>(Graph3<T> graph)
         {
             // FIXME: this is only partially correct. E.g. this would break dungeonroom connections, because
             // this way, when we have e.g. two dungeonrooms in a section, none of them gets connected to eachother.
@@ -36,7 +36,7 @@ namespace DungeonGame.Utils.Graph
             }
         }
 
-        public static Triangle<T> CreateSupraTriangle<T>(IEnumerable<Vertex<T>> vertecies)
+        public static Triangle<T> CreateSupraTriangle<T>(IEnumerable<Vertex3<T>> vertecies)
         {
             // calculate bounding box
             // TODO: separate this part into its own method (?)
@@ -67,19 +67,19 @@ namespace DungeonGame.Utils.Graph
             // data attribute of vertecies is intentionally null (default). The Triangulation method utilizes this property.
             return new Triangle<T>
             (
-                new Vertex<T>(default, a),
-                new Vertex<T>(default, b),
-                new Vertex<T>(default, c)
+                new Vertex3<T>(default, a),
+                new Vertex3<T>(default, b),
+                new Vertex3<T>(default, c)
             );
         }
 
-        public static List<Triangle<T>> CreateTriangles<T>(IEnumerable<Vertex<T>> vertecies, Triangle<T> supraTriangle)
+        public static List<Triangle<T>> CreateTriangles<T>(IEnumerable<Vertex3<T>> vertecies, Triangle<T> supraTriangle)
         {
             List<Triangle<T>> triangles = new() { supraTriangle };
             
             foreach (var vertex in vertecies)
             {
-                List<Edge<T>> polygon = new();
+                List<Edge3<T>> polygon = new();
 
                 var badTriangles = GetBadTriangles(triangles, vertex);
 
@@ -95,7 +95,7 @@ namespace DungeonGame.Utils.Graph
             return triangles;
         }
 
-        public static List<Triangle<T>> GetBadTriangles<T>(List<Triangle<T>> triangles, Vertex<T> vertex)
+        public static List<Triangle<T>> GetBadTriangles<T>(List<Triangle<T>> triangles, Vertex3<T> vertex)
         {
             List<Triangle<T>> badTriangles = new();
 
@@ -110,7 +110,7 @@ namespace DungeonGame.Utils.Graph
             return badTriangles;
         }
 
-        public static void AddNotSharedEdgesToPolygon<T>(List<Triangle<T>> badTriangles, List<Edge<T>> polygon)
+        public static void AddNotSharedEdgesToPolygon<T>(List<Triangle<T>> badTriangles, List<Edge3<T>> polygon)
         {
             foreach (var triangle in badTriangles)
             {
@@ -122,7 +122,7 @@ namespace DungeonGame.Utils.Graph
             }
         }
 
-        public static bool DoesAnyTriangleShareEdge<T>(List<Triangle<T>> badTriangles, Triangle<T> badTriangle, Edge<T> edge)
+        public static bool DoesAnyTriangleShareEdge<T>(List<Triangle<T>> badTriangles, Triangle<T> badTriangle, Edge3<T> edge)
         {
             foreach (var triangleToCheck in badTriangles)
             {
