@@ -10,158 +10,120 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
 
-namespace DungeonGame.Dungeon
+namespace DungeonGame.Dungeons
 {
     public class DungeonRoom : MonoBehaviour
     {
-        public string roomName;
-
+        // TODO: These need to be initialized somehow later trough the data in the DungeonPrefab object
+        public DungeonRoomConfiguration roomConfig; 
         public DungeonConfiguration config;
         public Dungeon dungeon;
 
-        public DungeonRoomConnections relations;
-        public List<DungeonRoom> Neighbours => relations.neighbours;
-
-        public Triangle<DungeonRoom> triangle;
+        public DungeonRoomRelations relations;
 
         public Collider2D collider2d;
 
-        public Tilemap tileMap;
+        public string Name => roomConfig.roomName;
 
-        public void Init(Dungeon dungeon)
+        public (Vector3Int[] positions, TileBase[] tilebases) TileMapData => DungeonRoomPrefab.TileMapData[config.name];
+
+        public void Init(Dungeon dungeon, DungeonRoomConfiguration roomConfig, DungeonRoomPrefab roomPrefab)
         {
             this.dungeon = dungeon;
+            this.roomConfig = roomConfig;
             this.config = dungeon.config;
-            relations = new(this);
-        }
+            this.collider2d = roomPrefab.collider2d;
 
+            relations = new(this);
+
+            DestroyImmediate(roomPrefab.tileMap.transform.parent.gameObject);
+        }
+    
         public bool Intersects(DungeonRoom room)
         {
-            return collider2d.Distance(room.collider2d).distance < dungeon.config.roomSpacing;
+            return collider2d.Distance(room.collider2d).distance < dungeon.random.Float32(config.roomSpacingMin, config.rommSpacingMax);
         }
 
-        public bool IntersectsWithAnyRoom(List<DungeonRoom> rooms)
+        public bool IntersectsWithAnyRoom(HashSet<DungeonRoom> rooms)
         {
-            foreach (var room in rooms)
-            {
-                if (Intersects(room))
-                    return true;
-            }
-
-            return false;
+            return rooms.Any(Intersects);
         }
 
-        private void OnDrawGizmos()
+        public void OnDrawGizmos()
         {
-            foreach (var neighbour in Neighbours)
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(collider2d.bounds.center, collider2d.bounds.size);
+
+            Gizmos.color = Color.green;
+
+            foreach (var neighbour in relations.Neighbours)
             {
-                Gizmos.DrawLine(transform.position, neighbour.transform.position);
-            }
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            if (triangle == null) return;
-
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(triangle.circumCircle.center, triangle.circumCircle.radius);
-
-            foreach (var neighbour in Neighbours)
-            {
-                Gizmos.color = Color.red;
-
-                Vector3 a = new(transform.position.x, neighbour.transform.position.y);
-
-                Gizmos.DrawLine(transform.position, a);
-                Gizmos.DrawLine(a, neighbour.transform.position);
+                Gizmos.DrawLine(collider2d.bounds.center, neighbour.collider2d.bounds.center);
             }
 
-            foreach (var connection in relations.connections)
-            {
-                Gizmos.color = Color.green;
-
-                Gizmos.DrawLine(connection.AConnectionPoint, connection.BConnectionPoint);
-
-                Gizmos.color = Color.yellow;
-                
-                Gizmos.DrawCube(connection.AConnectionPoint, new Vector3(1, 1, 1));
-                Gizmos.DrawCube(connection.BConnectionPoint, new Vector3(1, 1, 1));
-            }
-
-            /*
-            for (float i = 0; i < 360; i += 2.5f)
-            {
-                Vector3 directionRotated = Quaternion.Euler(0, 0, i) * Vector2.one;
-
-                RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, directionRotated);
-
-                if (hits.Length < 2) continue;
-
-                var hit = hits.OrderBy((hit) => hit.distance).ElementAt(1);
-
-                if (hit.collider != null)
-                {
-                    if (!Neighbours.Contains(hit.collider.gameObject.GetComponent<DungeonRoom>())) continue;
-
-                    Gizmos.DrawLine(transform.position, transform.position + directionRotated * hit.distance*0.7f);
-                    Gizmos.DrawCube(new(hit.point.x, hit.point.y, 0), new(1, 1, 1)); 
-                }
-            }*/
+            //Debug.Log(relations.Neighbours.Count());
         }
     }
 
-    [Serializable]
-    public class DungeonRoomConnections
+    public class DungeonRoomRelations
     {
         public DungeonRoom room;
 
-        public List<DungeonRoom> neighbours;
+        public BetterDictionary<DungeonRoom, DungeonRoomConnection> DungeonRoomConnections; // best of both worlds :D
 
-        public List<DungeonRoomConnection> connections;
+        public IEnumerable<DungeonRoom>           Neighbours  => DungeonRoomConnections.Keys;
+        public IEnumerable<DungeonRoomConnection> Connections => DungeonRoomConnections.Values;
 
-        public DungeonRoomConnections(DungeonRoom room)
+        public DungeonRoomRelations(DungeonRoom room)
         {
             this.room = room;
-            this.neighbours = new();
-            this.connections = new();
+
+            DungeonRoomConnections = new();
         }
 
-        public void Add(DungeonRoom neighbour)
+        public void AddNeighbour(DungeonRoom neighbour)
         {
-            if (room == neighbour) return;
-            if (neighbours.Contains(neighbour)) return;
-
-            DungeonRoomConnection connection = new(room, neighbour, Vector3.zero, Vector3.zero);
-
-            connections.Add(connection);
-
-            neighbours.Add(neighbour);
-
-            neighbour.relations.neighbours.Add(room);
-            neighbour.relations.connections.Add(connection);
+            DungeonRoomConnections[neighbour] ??= new(room, neighbour);
+            //DungeonRoomConnections.Add(neighbour, new(room, neighbour)); // this does not work
         }
 
-        public DungeonRoomConnection GetConnection(DungeonRoom neighbour)
+        public void RemoveNeighbour(DungeonRoom neighbour)
         {
-            return connections.Find((connection) => connection.A == neighbour || connection.B == neighbour);
+            DungeonRoomConnections.Remove(neighbour);
         }
     }
 
-    [Serializable]
     public class DungeonRoomConnection
     {
-        public DungeonRoom A;
-        public DungeonRoom B;
+        [Header("References")]
 
-        public Vector3 AConnectionPoint;
-        public Vector3 BConnectionPoint;
+        public DungeonRoom room;
+        public DungeonRoom neighbor;
 
-        public DungeonRoomConnection(DungeonRoom a, DungeonRoom b, Vector3 tileA, Vector3 tileB)
+        [Header("Door Configuration")]
+
+        public DungeonRoomDoor Door;
+
+        public DungeonRoomDoor NeighborDoor => ConnectionFromNeighbor.Door;
+
+        public DungeonRoomConnection ConnectionFromNeighbor => neighbor.relations.DungeonRoomConnections[room];
+
+        public DungeonRoomConnection(DungeonRoom room, DungeonRoom neighbor)
         {
-            A = a;
-            B = b;
-            this.AConnectionPoint = tileA;
-            this.BConnectionPoint = tileB;
+            this.room = room;
+            this.neighbor = neighbor;
+        }
+    }
+    
+    public class DungeonRoomDoor // maybe this should be a struct?
+    {
+        public Vector3Int[] tiles;
+        public Vector3Int center;
+
+        public DungeonRoomDoor(Vector3Int[] tiles, Vector3Int center)
+        {
+            this.tiles = tiles;
+            this.center = center;
         }
     }
 }
