@@ -13,6 +13,30 @@ namespace DungeonGame.Utils
             random.Shuffle(list);
         }
 
+        public static T GetRandom<T>(this IEnumerable<T> enumerable, SeedableRandom random)
+        {
+            if (enumerable.Count() == 0) return default;
+
+            return enumerable.ElementAt(random.Int32(0, enumerable.Count() - 1));
+        }
+
+        public static T[] GetRandom<T>(this IEnumerable<T> enumerable, SeedableRandom random, int count)
+        {
+            if (enumerable.Count() == 0) return default;
+
+            T[] result = new T[count];
+
+            for (int i = 0; i < count; i++)
+                result[i] = enumerable.GetRandom(random);
+
+            return result;
+        }
+
+        public static T[] GetRandom<T>(this IEnumerable<T> enumerable, SeedableRandom random, int min, int max)
+        {
+            return enumerable.GetRandom(random, random.Int32(min, max));
+        }
+
         public static T GetAndRemoveRandom<T>(this IList<T> list, SeedableRandom random)
         {
             if (list.Count == 0) return default;
@@ -25,11 +49,21 @@ namespace DungeonGame.Utils
             return value;
         }
 
-        public static T GetRandom<T>(this IEnumerable<T> enumerable, SeedableRandom random)
+        public static T[] GetAndRemoveRandom<T>(this IList<T> list, SeedableRandom random, int count)
         {
-            if (enumerable.Count() == 0) return default;
+            if (list.Count == 0) return default;
 
-            return enumerable.ElementAt(random.Int32(0, enumerable.Count() - 1));
+            T[] result = new T[count];
+
+            for (int i = 0; i < count; i++)
+                result[i] = list.GetAndRemoveRandom(random);
+
+            return result;
+        }
+
+        public static T[] GetAndRemoveRandom<T>(this IList<T> list, SeedableRandom random, int min, int max)
+        {
+            return list.GetAndRemoveRandom(random, random.Int32(min, max));
         }
     }
 }
