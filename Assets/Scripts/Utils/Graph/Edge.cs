@@ -29,6 +29,11 @@ namespace DungeonGame.Utils.Graph
             return a == vertex || b == vertex;
         }
 
+        public Vertex<TData> Other(TVertex vertex)
+        {
+            return a == vertex ? b : a;
+        }
+
         public override string ToString()
         {
             return $"Edge({a}, {b})";
