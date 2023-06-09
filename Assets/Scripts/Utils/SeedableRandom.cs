@@ -8,6 +8,8 @@ namespace DungeonGame.Utils
 {
     public class SeedableRandom
     {
+        public static readonly SeedableRandom Instance = new();
+
         private Seed _seed;
 
         public Seed Seed
@@ -23,8 +25,8 @@ namespace DungeonGame.Utils
 
         private long[] state;
 
-        public SeedableRandom()                  => Seed = Environment.TickCount;
-        public SeedableRandom(Seed seed=default) => Seed = seed;
+        public SeedableRandom()                    => Seed = Seed.TimedSeed;
+        public SeedableRandom(Seed seed = default) => Seed = seed;
 
         public float Float32()
         {
@@ -138,6 +140,8 @@ namespace DungeonGame.Utils
 
     public readonly struct Seed
     {
+        public static Seed TimedSeed => Environment.TickCount;
+
         private readonly long value;
 
         public Seed(long   seed) => value = seed;
