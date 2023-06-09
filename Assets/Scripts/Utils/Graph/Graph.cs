@@ -10,41 +10,33 @@ namespace DungeonGame.Utils.Graph
     [Serializable]
     public class BaseGraph<TVertex, TEdge, TData> where TVertex : Vertex<TData> where TEdge : BaseEdge<TVertex, TData>
     {
-        public HashSet<TVertex> vertecies;
+        public int Count => VerteciesAndEdges.Count;
 
-        public int Count => vertecies.Count;
+        public BetterDictionary<TVertex, HashSet<TEdge>> VerteciesAndEdges;
 
-        public Dictionary<TVertex, HashSet<TEdge>> edgesMap;
-        public HashSet<TEdge> edges;
+        public IEnumerable<TVertex> Vertecies => VerteciesAndEdges.Keys;
+        public IEnumerable<HashSet<TEdge>> EdgeSets => VerteciesAndEdges.Values;
+        public IEnumerable<TEdge> Edges => EdgeSets.SelectMany((edges) => edges);
 
-        #region DEBUGGING
-
-        public List<TVertex> list;
-
-        public void Refresh()
-        {
-            list = new();
-
-            foreach (var vertex in vertecies)
-            {
-                list.Add(vertex);
-            }
-        }
-
-        #endregion DEBUGGING
+        //public HashSet<TEdge> edges;
 
         public BaseGraph(HashSet<TVertex> vertecies = null)
         {
-            this.vertecies = vertecies ?? new();
+            VerteciesAndEdges = new();
 
-            edges = new();
-            edgesMap = new();
+            if (vertecies != null)
+            {
+                foreach (var vertex in vertecies)
+                {
+                    VerteciesAndEdges[vertex] = new();
+                }
+            }
         }
 
         // https://www.wikiwand.com/de/Algorithmus_von_Kruskal
         // without any thinking implemented. Works but needs to be looked at again.
-        // mhm, reafactor it lalter, it realy is ugly
-        public HashSet<TEdge> MinimumSpanningTree()
+        // hmm, reafactor it later.
+        public void MinimumSpanningTree(out HashSet<TEdge> removedEdges)
         {
             // Create a list to store the minimum spanning tree edges
             List<TEdge> minimumSpanningTree = new();
@@ -56,14 +48,14 @@ namespace DungeonGame.Utils.Graph
             Dictionary<TVertex, int> rank = new();
 
             // Initialize the parent and rank dictionaries
-            foreach (var vertex in vertecies)
+            foreach (var vertex in Vertecies)
             {
                 parent[vertex] = vertex;
                 rank[vertex] = 0;
             }
 
             // Sort all edges in ascending order by weight
-            List<TEdge> sortedEdges = edges.ToList();
+            List<TEdge> sortedEdges = Edges.ToList();
             sortedEdges.Sort((a, b) => a.weight.CompareTo(b.weight));
 
             // Process each edge in the sorted order
@@ -95,26 +87,17 @@ namespace DungeonGame.Utils.Graph
                 }
             }
 
-            HashSet<TEdge> removedEdges = edges.Where((edge) => !minimumSpanningTree.Contains(edge)).ToHashSet();
+
+            removedEdges = Edges.Except(minimumSpanningTree).ToHashSet();
 
             // Update the edges of the graph to contain only the minimum spanning tree edges
-            edges = new HashSet<TEdge>(minimumSpanningTree);
 
-            // Update the edges map
-            edgesMap.Clear();
+            RemoveEdges(removedEdges);
+            
+            //AddEdges(minimumSpanningTree);
 
-            foreach (var vertex in vertecies)
-            {
-                edgesMap[vertex] = new HashSet<TEdge>();
-            }
-
-            foreach (var edge in edges)
-            {
-                edgesMap[edge.a].Add(edge);
-                edgesMap[edge.b].Add(edge);
-            }
-
-            return removedEdges;
+            //Debug.Log(Edges.Count() + " <---");
+            //Debug.Log(removedEdges.Count() + " <------");
         }
 
         private TVertex FindRoot(TVertex vertex, Dictionary<TVertex, TVertex> parent)
@@ -127,28 +110,22 @@ namespace DungeonGame.Utils.Graph
                 vertex = parent[vertex];
             }
 
-            while (stack.Count > 0)
-                parent[stack.Pop()] = vertex;
+            //while (stack.Count > 0)
+            //    parent[stack.Pop()] = vertex;
 
             return vertex;
         }
 
         public void AddVertex(TVertex vertex)
         {
-            if (!vertecies.Add(vertex)) return;
-
-            edgesMap.Add(vertex, new());
+            VerteciesAndEdges[vertex] ??= new();
         }
 
         public void RemoveVertex(TVertex vertex)
         {
-            if (!vertecies.Remove(vertex)) return;
+            VerteciesAndEdges.Remove(vertex);
 
-            edges.RemoveWhere((edge) => edge.HasVertex(vertex));
-
-            edgesMap.Remove(vertex);
-            
-            foreach (var (_, edges) in edgesMap)
+            foreach (var edges in EdgeSets)
             {
                 edges.RemoveWhere((edge) => edge.HasVertex(vertex));
             }
@@ -156,41 +133,89 @@ namespace DungeonGame.Utils.Graph
 
         public void AddEdge(TEdge edge)
         {
-            if (!vertecies.Contains(edge.a)) AddVertex(edge.a); // these are HashSets, no need to check anything
-            if (!vertecies.Contains(edge.b)) AddVertex(edge.b);
+            AddVertex(edge.a);
+            AddVertex(edge.b);
 
-            if (!edges.Add(edge)) return;
-
-            edgesMap.TryGetValue(edge.a, out var a); // should not be null by design
-            edgesMap.TryGetValue(edge.b, out var b);
-
-            a.Add(edge);
-            b.Add(edge);
+            VerteciesAndEdges[edge.a].Add(edge);
+            VerteciesAndEdges[edge.b].Add(edge);
         }
 
         public void RemoveEdge(TEdge edge)
         {
-            if (!vertecies.Contains(edge.a) || !vertecies.Contains(edge.b)) return;
+            VerteciesAndEdges[edge.a]?.Remove(edge);
+            VerteciesAndEdges[edge.b]?.Remove(edge);
+        }
 
-            if (!edges.Remove(edge)) return;
+        public void AddVertecies(IEnumerable<TVertex> vertecies)
+        {
+            foreach (var vertex in vertecies)
+                AddVertex(vertex);
+        }
 
-            edgesMap.TryGetValue(edge.a, out var a); // should not be null by design
-            edgesMap.TryGetValue(edge.b, out var b);
+        public void RemoveVertecies(IEnumerable<TVertex> vertecies)
+        {
+            foreach (var vertex in vertecies)
+                RemoveVertex(vertex);
+        }
 
-            a.Add(edge);
-            b.Add(edge);
+        public void AddEdges(IEnumerable<TEdge> edges)
+        {
+            if (edges == null)
+                return;
+
+            foreach (var edge in edges)
+                AddEdge(edge);
+        }
+
+        public void RemoveEdges(IEnumerable<TEdge> edges)
+        {
+            foreach (var edge in edges.ToList())
+                RemoveEdge(edge);
+        }
+
+        public void MergeGraph(BaseGraph<TVertex, TEdge, TData> graph)
+        {
+            foreach (var vertex in graph.Vertecies)
+                AddVertex(vertex);
+
+            foreach (var edge in graph.Edges)
+                AddEdge(edge);
         }
     }
 
-    [Serializable]
     public class Graph<TData> : BaseGraph<Vertex<TData>, Edge<TData>, TData>
     {
         public Graph(HashSet<Vertex<TData>> vertecies = null) : base(vertecies) { }
     }
 
-    [Serializable]
     public class Graph3<TData> : BaseGraph<Vertex3<TData>, Edge3<TData>, TData>
     {
         public Graph3(HashSet<Vertex3<TData>> vertecies = null) : base(vertecies) { }
+
+        public void SetWeights(Func<Vertex3<TData>, Vertex3<TData>, float> weightFunction)
+        {
+            foreach (var edge in Edges)
+            {
+                edge.weight = weightFunction(edge.a, edge.b);
+            }
+        }
+
+        public void SetWeightsToDistance()
+        {
+            SetWeights((a, b) => Vector3.Distance(a.position, b.position));
+        }
+
+        public void DrawGizmos()
+        {
+            foreach (var vertex in Vertecies)
+            {
+                Gizmos.DrawSphere(vertex.position, 0.1f);
+            }
+
+            foreach (var edge in Edges)
+            {
+                Gizmos.DrawLine(edge.a.position, edge.b.position);
+            }
+        }
     }
-} 
+}
