@@ -18,9 +18,9 @@ namespace DungeonGame.Utils.Graph
             // maybe resolve this edge case in dungeon generation
             if (graph.Count < 3) return;
 
-            var supraTriangle = CreateSupraTriangle(graph.vertecies);
+            var supraTriangle = CreateSupraTriangle(graph.Vertecies);
 
-            var triangles = CreateTriangles(graph.vertecies, supraTriangle);
+            var triangles = CreateTriangles(graph.Vertecies, supraTriangle);
 
             triangles = GetUnconnectedTriangles(triangles, supraTriangle);
 
@@ -51,14 +51,14 @@ namespace DungeonGame.Utils.Graph
                 if (vertex.position.y > max.y) max.y = vertex.position.y;
             }
 
-            // TODO: this is a rough aproximation for a supra triangle, a lot of room for optimization
+            // TODO: this is a pretty bad "aproximation" for a supra triangle, a lot of room for optimization
 
             var size = max - min;
 
             Vector2 tcenter = new(min.x + size.x / 2, max.y);
             Vector2 bcenter = tcenter - new Vector2(0, size.y);
 
-            var diagonal = size.magnitude;
+            var diagonal = size.magnitude * 5;
 
             Vector2 a = bcenter + new Vector2(-1f, 0.0f) * diagonal;
             Vector2 b = tcenter + new Vector2(0f, 0.5f) * diagonal;
