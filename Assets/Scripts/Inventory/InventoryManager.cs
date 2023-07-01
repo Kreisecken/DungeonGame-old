@@ -5,6 +5,10 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance;
+    
+    public GameObject contentObject;
+    public GameObject inventoryObject;
+    
     public List<Item> items = new List<Item>(); //This List includes every Item. 
     //The idea is that you can choose whether you want to see all Items together or sorted in groups.
     // We have to be careful that the items dont dublicate though.
@@ -58,4 +62,12 @@ items.Remove(item);
 rewards.Remove(item);
     }
 
+    public void ShowInventory() {
+        inventoryObject.SetActive(true);
+    }
+    
+    public void HideInventory() {
+        inventoryObject.SetActive(false);
+    }
+    
 }
