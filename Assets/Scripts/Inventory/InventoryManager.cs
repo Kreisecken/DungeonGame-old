@@ -68,6 +68,9 @@ rewards.Remove(item);
     
     public void HideInventory() {
         inventoryObject.SetActive(false);
+        foreach(Transform t in contentObject.transform) {
+            GameObject.Destroy(t.gameObject);
+        }
     }
     
 }
