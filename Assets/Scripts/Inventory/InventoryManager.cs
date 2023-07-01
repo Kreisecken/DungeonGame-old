@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class InventoryManager : MonoBehaviour
     
     public GameObject contentObject;
     public GameObject inventoryObject;
+    public GameObject itemObjectPrefab;
     
     public List<Item> items = new List<Item>(); //This List includes every Item. 
     //The idea is that you can choose whether you want to see all Items together or sorted in groups.
@@ -63,7 +66,15 @@ rewards.Remove(item);
     }
 
     public void ShowInventory() {
+        if(inventoryObject.activeSelf) return;
         inventoryObject.SetActive(true);
+        foreach(Item item in items) {
+            GameObject itemObject = Instantiate(itemObjectPrefab);
+            Debug.Log(itemObject.transform.GetChild(0).GetComponent<TMP_Text>());
+            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.itemName;
+            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.icon;
+            itemObject.transform.SetParent(contentObject.transform);
+        }
     }
     
     public void HideInventory() {
