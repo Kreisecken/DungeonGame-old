@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace DungeonGame.Items
 {
-    // TODO: use the inventory system (extend form Item)
     [CreateAssetMenu(fileName = "NewWeapon", menuName = "DungeonGame/Weapon")]
-    public class WeaponProperties : ScriptableObject
+    public class WeaponProperties : ItemProperties
     {
         public float fireDelay = 0.5f;
         public ProjectileProperties projectileType;

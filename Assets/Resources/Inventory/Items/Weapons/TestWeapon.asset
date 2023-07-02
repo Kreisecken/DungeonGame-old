@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ef5c1b6bc00bf644bd528c35a29557c, type: 3}
   m_Name: TestWeapon
   m_EditorClassIdentifier: Assembly-CSharp:DungeonGame.Items:WeaponType
+  id: 7
+  itemName: Test Weapon
+  icon: {fileID: 21300000, guid: 120bf54dff785a0429b068b814e9c12a, type: 3}
   fireDelay: 0.5
   projectileType: {fileID: 11400000, guid: 9a842c288473bf8469d232b8203a3ada, type: 2}
