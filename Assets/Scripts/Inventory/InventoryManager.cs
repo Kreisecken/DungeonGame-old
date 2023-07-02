@@ -70,9 +70,8 @@ rewards.Remove(item);
         inventoryObject.SetActive(true);
         foreach(Item item in items) {
             GameObject itemObject = Instantiate(itemObjectPrefab);
-            Debug.Log(itemObject.transform.GetChild(0).GetComponent<TMP_Text>());
-            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.itemName;
-            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.icon;
+            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.properties.itemName;
+            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.properties.icon;
             itemObject.transform.SetParent(contentObject.transform);
         }
     }
