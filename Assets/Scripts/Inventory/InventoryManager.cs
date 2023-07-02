@@ -23,55 +23,65 @@ public class InventoryManager : MonoBehaviour
         instance=this;
     }
 
-    public void Add(Item item){
-        items.Add(item);
+    private void AddToList(List<Item> list, Item item) {
+        // try to add the items to an existing slot
+        foreach(Item i in list) {
+            if(i.properties == item.properties) {
+                i.count += item.count;
+                return;
+            }
+        }
+        
+        // else create a new slot
+        list.Add(item);
     }
-public void addWeapons(Item item){
-    items.Add(item);
-    weapons.Add(item);
-}
-    
+    public void Add(Item item){
+        AddToList(items, item);
+    }
+    public void addWeapons(Item item){
+        AddToList(items, item);
+        AddToList(weapons, item);
+    }
     public void addFood(Item item){
-items.Add(item);
-food.Add(item);
+        AddToList(items, item);
+        AddToList(food, item);
     }
     public void addQuestItems(Item item){
-items.Add(item);
-questItems.Add(item);
+        AddToList(items, item);
+        AddToList(questItems, item);
     }
-public void addRewards(Item item){
-items.Add(item);
-rewards.Add(item);
+    public void addRewards(Item item){
+        AddToList(items, item);
+        AddToList(rewards, item);
     }
 
      public void Remove(Item item){
         items.Remove(item);
     }
-public void RemoveWeapons(Item item){
-    items.Remove(item);
-    weapons.Remove(item);
-}
-    
+    public void RemoveWeapons(Item item){
+        items.Remove(item);
+        weapons.Remove(item);
+    }
     public void RemoveFood(Item item){
-items.Remove(item);
-food.Remove(item);
+        items.Remove(item);
+        food.Remove(item);
     }
     public void RemoveQuestItems(Item item){
-items.Remove(item);
-questItems.Remove(item);
+        items.Remove(item);
+        questItems.Remove(item);
     }
-public void RemoveRewards(Item item){
-items.Remove(item);
-rewards.Remove(item);
+    public void RemoveRewards(Item item){
+        items.Remove(item);
+        rewards.Remove(item);
     }
 
     public void ShowInventory() {
         if(inventoryObject.activeSelf) return;
         inventoryObject.SetActive(true);
-        foreach(Item item in items) {
+        foreach(Item i in items) {
             GameObject itemObject = Instantiate(itemObjectPrefab);
-            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.properties.itemName;
-            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.properties.icon;
+            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = i.properties.itemName;
+            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = i.properties.icon;
             itemObject.transform.SetParent(contentObject.transform);
         }
     }
