@@ -8,7 +8,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance;
     
-    public GameObject contentObject;
+    public Transform contentTransform;
     public GameObject inventoryObject;
     public GameObject itemObjectPrefab;
     
@@ -75,23 +75,47 @@ public class InventoryManager : MonoBehaviour
         items.Remove(item);
         rewards.Remove(item);
     }
-
+    
     public void ShowInventory() {
+        UpdateContent();
         if(inventoryObject.activeSelf) return;
         inventoryObject.SetActive(true);
-        foreach(Item i in items) {
-            GameObject itemObject = Instantiate(itemObjectPrefab);
-            itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = i.properties.itemName;
-            itemObject.transform.GetChild(1).GetComponent<Image>().sprite = i.properties.icon;
-            itemObject.transform.SetParent(contentObject.transform);
-        }
     }
     
     public void HideInventory() {
         inventoryObject.SetActive(false);
-        foreach(Transform t in contentObject.transform) {
-            GameObject.Destroy(t.gameObject);
+    }
+    
+    private void UpdateContent() {
+        int contentLength = contentTransform.childCount;
+        int itemsLength = items.Count;
+        // keep existing item objects
+        for(int i = 0; i < Mathf.Min(contentLength, itemsLength); i++) {
+            UpdateItemSlot(items[i], contentTransform.GetChild(i).gameObject);
         }
+        // remove excess objects if necessary
+        if(contentLength > itemsLength) {
+            for(int i = itemsLength; i < contentLength; i++) {
+                GameObject.Destroy(contentTransform.GetChild(i).gameObject);
+            }
+        }
+        // add new objects if necessary
+        if(itemsLength > contentLength) {
+            for(int i = contentLength; i < itemsLength; i++) {
+                CreateItemSlot(items[i]);
+            }
+        }
+    }
+    
+    public void CreateItemSlot(Item item) {
+        GameObject itemObject = Instantiate(itemObjectPrefab);
+        UpdateItemSlot(item, itemObject);
+        itemObject.transform.SetParent(contentTransform);
+    }
+    
+    private void UpdateItemSlot(Item item, GameObject itemObject) {
+        itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.properties.itemName;
+        itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.properties.icon;
     }
     
 }
