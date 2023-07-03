@@ -26,7 +26,8 @@ public class InventoryManager : MonoBehaviour
     private void AddToList(List<Item> list, Item item) {
         // try to add the items to an existing slot
         foreach(Item i in list) {
-            if(i.properties == item.properties) {
+            ItemProperties p = item.properties;
+            if(i.properties == p && (p.maxCount < 0 || i.count + item.count <= p.maxCount)) {
                 i.count += item.count;
                 return;
             }

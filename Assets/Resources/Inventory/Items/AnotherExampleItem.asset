@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 4422
   itemName: Extraordinary Steam Logo Thing
   icon: {fileID: 21300000, guid: b88a78d35a73e4a33bf6788d22e3cb67, type: 3}
+  maxCount: -1
