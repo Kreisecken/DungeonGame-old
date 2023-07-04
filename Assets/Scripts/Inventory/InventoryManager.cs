@@ -143,6 +143,7 @@ public class InventoryManager : MonoBehaviour
     {
         itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.properties.itemName;
         itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.properties.icon;
+        itemObject.transform.GetChild(3).GetChild(0).GetComponent<TMP_Text>().text = item.count.ToString();
     }
     
 }
