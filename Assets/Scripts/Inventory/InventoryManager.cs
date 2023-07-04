@@ -43,25 +43,28 @@ public class InventoryManager : MonoBehaviour
     public void Add(Item item)
     {
         AddToList(items, item);
+        
+        // update inventory if visible
+        if(inventoryObject.activeSelf) ShowInventory(); // TODO: make this more efficient
     }
     public void addWeapons(Item item)
     {
-        AddToList(items, item);
+        Add(item);
         AddToList(weapons, item);
     }
     public void addFood(Item item)
     {
-        AddToList(items, item);
+        Add(item);
         AddToList(food, item);
     }
     public void addQuestItems(Item item)
     {
-        AddToList(items, item);
+        Add(item);
         AddToList(questItems, item);
     }
     public void addRewards(Item item)
     {
-        AddToList(items, item);
+        Add(item);
         AddToList(rewards, item);
     }
     
