@@ -11,6 +11,7 @@ public class InventoryManager : MonoBehaviour
     public Transform contentTransform;
     public GameObject inventoryObject;
     public GameObject itemObjectPrefab;
+    public Toggle enableDeleteButton;
     
     public List<Item> items = new List<Item>(); //This List includes every Item. 
     //The idea is that you can choose whether you want to see all Items together or sorted in groups.
@@ -71,25 +72,28 @@ public class InventoryManager : MonoBehaviour
     public void Remove(Item item)
     {
         items.Remove(item);
+        
+        // update inventory if visible
+        if(inventoryObject.activeSelf) ShowInventory(); // TODO: make this more efficient
     }
     public void RemoveWeapons(Item item)
     {
-        items.Remove(item);
+        Remove(item);
         weapons.Remove(item);
     }
     public void RemoveFood(Item item)
     {
-        items.Remove(item);
+        Remove(item);
         food.Remove(item);
     }
     public void RemoveQuestItems(Item item)
     {
-        items.Remove(item);
+        Remove(item);
         questItems.Remove(item);
     }
     public void RemoveRewards(Item item)
     {
-        items.Remove(item);
+        Remove(item);
         rewards.Remove(item);
     }
     
@@ -141,9 +145,18 @@ public class InventoryManager : MonoBehaviour
     
     private void UpdateItemSlot(Item item, GameObject itemObject)
     {
-        itemObject.transform.GetChild(0).GetComponent<TMP_Text>().text = item.properties.itemName;
-        itemObject.transform.GetChild(1).GetComponent<Image>().sprite = item.properties.icon;
-        itemObject.transform.GetChild(3).GetChild(0).GetComponent<TMP_Text>().text = item.count.ToString();
+        InventoryItem inventoryItem = itemObject.GetComponent<InventoryItem>();
+        inventoryItem.UpdateItemSlot(item);
+        inventoryItem.UpdateDeleteButton(enableDeleteButton.isOn);
+    }
+    
+    public void UpdateDeleteButtons()
+    {
+        bool visible = enableDeleteButton.isOn;
+        foreach(Transform t in contentTransform)
+        {
+            t.GetComponent<InventoryItem>().UpdateDeleteButton(visible);
+        }
     }
     
 }

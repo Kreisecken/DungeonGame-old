@@ -392,6 +392,17 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &215609508 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6054819346863251786, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+  m_PrefabInstance: {fileID: 7968565300798518563}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &274093131 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3343046925272473528, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
@@ -1574,6 +1585,10 @@ PrefabInstance:
       propertyPath: itemObjectPrefab
       value: 
       objectReference: {fileID: 45591521144072842, guid: e9ff6a57ee162a14e8940708f5628e4b, type: 3}
+    - target: {fileID: 1202143849053037839, guid: c11512195613a2a4e8fe0be924ceb95c, type: 3}
+      propertyPath: enableDeleteButton
+      value: 
+      objectReference: {fileID: 215609508}
     - target: {fileID: 2793392108606693306, guid: c11512195613a2a4e8fe0be924ceb95c, type: 3}
       propertyPath: m_RootOrder
       value: 12
@@ -2475,6 +2490,30 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4838777812489848157, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -30
+      objectReference: {fileID: 0}
     - target: {fileID: 4842774664452567735, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2622,6 +2661,22 @@ PrefabInstance:
     - target: {fileID: 6047575581596421523, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054819346863251786, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 373776830}
+    - target: {fileID: 6054819346863251786, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateDeleteButtons
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054819346863251786, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: InventoryManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054819346863251786, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6219647079394657614, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
       propertyPath: m_AnchorMax.x

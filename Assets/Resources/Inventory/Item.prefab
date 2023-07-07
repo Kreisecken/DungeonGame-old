@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6806202509063546045}
   - component: {fileID: 5794248417133688532}
   - component: {fileID: 4553622897006897904}
+  - component: {fileID: 5096397084161089441}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -125,6 +126,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5096397084161089441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45591521144072842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3561319dbc64e4899255b4ad32578f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1124586625933457136
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,7 +393,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8101333981026985272}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5096397084161089441}
+        m_TargetAssemblyTypeName: InventoryItem, Assembly-CSharp
+        m_MethodName: Remove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7091694716111843121
 GameObject:
   m_ObjectHideFlags: 0
