@@ -46,7 +46,7 @@ public class InventoryManager : MonoBehaviour
         AddToList(items, item);
         
         // update inventory if visible
-        if(inventoryObject.activeSelf) ShowInventory(); // TODO: make this more efficient
+        if(inventoryObject.activeSelf) UpdateContent(); // TODO: make this more efficient
     }
     public void addWeapons(Item item)
     {
@@ -74,7 +74,7 @@ public class InventoryManager : MonoBehaviour
         items.Remove(item);
         
         // update inventory if visible
-        if(inventoryObject.activeSelf) ShowInventory(); // TODO: make this more efficient
+        if(inventoryObject.activeSelf) UpdateContent(); // TODO: make this more efficient
     }
     public void RemoveWeapons(Item item)
     {
@@ -97,16 +97,10 @@ public class InventoryManager : MonoBehaviour
         rewards.Remove(item);
     }
     
-    public void ShowInventory()
+    public void SetInventoryVisible(bool visible)
     {
-        UpdateContent();
-        if (inventoryObject.activeSelf) return;
-        inventoryObject.SetActive(true);
-    }
-    
-    public void HideInventory()
-    {
-        inventoryObject.SetActive(false);
+        if(visible) UpdateContent();
+        inventoryObject.SetActive(visible);
     }
     
     private void UpdateContent()
