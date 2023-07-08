@@ -25,4 +25,9 @@ public class InventoryItem : MonoBehaviour
     {
         transform.GetChild(2).gameObject.SetActive(visible);
     }
+    
+    public void InventoryClick()
+    {
+        item.properties.InventoryClick(item);
+    }
 }

@@ -9,4 +9,9 @@ public class ItemProperties : ScriptableObject
     public string itemName;
     public Sprite icon;
     public int maxCount = -1; // -1 for no limit
+    
+    public void InventoryClick(Item item)
+    {
+        Debug.Log(itemName + " (" + item.count.ToString() + ") was clicked");
+    }
 }
