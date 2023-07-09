@@ -9,5 +9,10 @@ namespace DungeonGame.Items
     {
         public float fireDelay = 0.5f;
         public ProjectileProperties projectileType;
+        
+        override public void InventoryClick(Item item)
+        {
+            InventoryManager.instance.equipWeapon(item);
+        }
     }
 }

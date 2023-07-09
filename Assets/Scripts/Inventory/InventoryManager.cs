@@ -155,4 +155,24 @@ public class InventoryManager : MonoBehaviour
         }
     }
     
+    public void equipWeapon(Item item)
+    {
+        // move current weapon into main inventoy
+        if(currentWeapon != null)
+        {
+            Add(currentWeapon);
+            currentWeapon = null;
+            Destroy(weaponSlot.transform.GetChild(0));
+        }
+        
+        // move selected weapon into the weapon slot
+        Debug.Log("ausdfh9difj");
+        currentWeapon = item;
+        GameObject itemObject = Instantiate(itemObjectPrefab);
+        InventoryItem inventoryItem = itemObject.GetComponent<InventoryItem>();
+        inventoryItem.UpdateItemSlot(item);
+        itemObject.transform.SetParent(weaponSlot.transform);
+        itemObject.transform.position = weaponSlot.transform.position;
+        Remove(item);
+    }
 }
