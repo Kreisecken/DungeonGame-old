@@ -12,6 +12,8 @@ public class InventoryManager : MonoBehaviour
     public GameObject inventoryObject;
     public GameObject itemObjectPrefab;
     public Toggle enableDeleteButton;
+    public GameObject weaponSlot;
+    private Item currentWeapon; // TODO: use datastructures
     
     public List<Item> items = new List<Item>(); //This List includes every Item. 
     //The idea is that you can choose whether you want to see all Items together or sorted in groups.
