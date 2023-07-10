@@ -157,16 +157,17 @@ public class InventoryManager : MonoBehaviour
     
     public void equipWeapon(Item item)
     {
+        if(item == currentWeapon) return;
+        
         // move current weapon into main inventoy
         if(currentWeapon != null)
         {
             Add(currentWeapon);
             currentWeapon = null;
-            Destroy(weaponSlot.transform.GetChild(0));
+            Destroy(weaponSlot.transform.GetChild(0).gameObject);
         }
         
         // move selected weapon into the weapon slot
-        Debug.Log("ausdfh9difj");
         currentWeapon = item;
         GameObject itemObject = Instantiate(itemObjectPrefab);
         InventoryItem inventoryItem = itemObject.GetComponent<InventoryItem>();
