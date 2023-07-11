@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using DungeonGame.Player;
+using DungeonGame.Items;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -175,5 +177,8 @@ public class InventoryManager : MonoBehaviour
         itemObject.transform.SetParent(weaponSlot.transform);
         itemObject.transform.position = weaponSlot.transform.position;
         Remove(item);
+        
+        // set weapon of the player
+        PlayerScript.instance.SetWeapon((WeaponProperties) item.properties);
     }
 }
