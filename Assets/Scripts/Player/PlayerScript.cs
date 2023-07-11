@@ -8,10 +8,17 @@ namespace DungeonGame.Player
 {
     public class PlayerScript : Entity
     {
+        public static PlayerScript instance;
+        
         public Transform weaponDirection;
         public WeaponProperties testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet;
         
         private Weapon weapon;
+        
+        void Awake()
+        {
+            instance = this;
+        }
         
         new void Start()
         {
