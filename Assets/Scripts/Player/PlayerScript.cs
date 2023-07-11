@@ -42,5 +42,10 @@ namespace DungeonGame.Player
         {
             weaponDirection.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
         }
+        
+        public void SetWeapon(WeaponProperties weaponProperties)
+        {
+            weapon = new Weapon(weaponProperties, weaponDirection, this);
+        }
     }
 }
