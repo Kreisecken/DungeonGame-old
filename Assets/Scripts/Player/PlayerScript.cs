@@ -11,7 +11,6 @@ namespace DungeonGame.Player
         public static PlayerScript instance;
         
         public Transform weaponDirection;
-        public WeaponProperties testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet;
         
         private Weapon weapon;
         
@@ -23,9 +22,6 @@ namespace DungeonGame.Player
         new void Start()
         {
             base.Start();
-            
-            // TODO: collect weapons instead of just having them
-            weapon = new Weapon(testWeaponPropertiesBecauseWeaponsCanNotBeCollectedYet, weaponDirection, this);
         }
         
         void FixedUpdate()
