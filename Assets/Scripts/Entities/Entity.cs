@@ -17,10 +17,10 @@ namespace DungeonGame.Enemies
             health = maxHealth;
         }
         
-        public bool Damage(int amount, DamageType damageType, Team originTeam)
+        public bool Damage(int amount, DamageType damageType, Entity originEntity)
         {
             // return false if Entity is dead oder in the team of the damage source
-            if(health <= 0 || originTeam == team) return false;
+            if(health <= 0 || originEntity.team == team) return false;
             
             // TODO: add more damage calculations here (damage type, resistance, ...)
             health -= amount;

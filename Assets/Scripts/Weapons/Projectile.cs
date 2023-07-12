@@ -10,7 +10,7 @@ namespace DungeonGame.Items
     public class Projectile : MonoBehaviour
     {
         public ProjectileProperties properties;
-        public Team originTeam;
+        public Entity originEntity;
         private float lifeTime = 0f;
         
         void Start()
@@ -32,7 +32,7 @@ namespace DungeonGame.Items
             // check if an Entity was hit
             if(collider.gameObject.TryGetComponent<Entity>(out Entity entity))
             {
-                if(entity.Damage(properties.damage, properties.damageType, originTeam))
+                if(entity.Damage(properties.damage, properties.damageType, originEntity))
                 {
                     // aoe
                     if(properties.aoe) DoAOEDamage(collider);
@@ -53,7 +53,7 @@ namespace DungeonGame.Items
                 
                 if(collider.gameObject.TryGetComponent<Entity>(out Entity entity))
                 {
-                    entity.Damage(properties.aoeDamage, properties.aoeDamageType, originTeam);
+                    entity.Damage(properties.aoeDamage, properties.aoeDamageType, originEntity);
                 }
             }
         }

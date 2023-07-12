@@ -23,7 +23,7 @@ namespace DungeonGame.Items
         public int aoeDamage = 3;
         public DamageType aoeDamageType = DamageType.Explosion;
         
-        public GameObject CreateProjectile(Transform origin, Team originTeam)
+        public GameObject CreateProjectile(Transform origin, Entity originEntity)
         {
             // TODO: use a GameObject Queue for better performance (?)
             // add Projectile GameObject
@@ -39,7 +39,7 @@ namespace DungeonGame.Items
             collider.isTrigger = true;
             Projectile projectileScript = g.AddComponent<Projectile>();
             projectileScript.properties = this;
-            projectileScript.originTeam = originTeam;
+            projectileScript.originEntity = originEntity;
             
             return null;
         }

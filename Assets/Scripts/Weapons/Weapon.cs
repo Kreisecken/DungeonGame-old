@@ -49,7 +49,7 @@ namespace DungeonGame.Items
         
         protected void Shoot()
         {
-            properties.projectileType.CreateProjectile(projectileOrigin, owner.team);
+            properties.projectileType.CreateProjectile(projectileOrigin, owner);
         }
     }
 }
