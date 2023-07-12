@@ -109,5 +109,11 @@ namespace DungeonGame.Enemies
             
             return null;
         }
+        
+        override protected void OnDamage(int amount, DamageType damageType, Entity originEntity)
+        {
+            target = originEntity.transform;
+        }
+        
     }
 }

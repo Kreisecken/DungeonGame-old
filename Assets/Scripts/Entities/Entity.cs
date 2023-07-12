@@ -25,9 +25,16 @@ namespace DungeonGame.Enemies
             // TODO: add more damage calculations here (damage type, resistance, ...)
             health -= amount;
             
+            OnDamage(amount, damageType, originEntity);
+            
             if(health <= 0) Destroy(gameObject);
             
             return true;
+        }
+        
+        virtual protected void OnDamage(int amount, DamageType damageType, Entity originEntity)
+        {
+            
         }
     }
 }
