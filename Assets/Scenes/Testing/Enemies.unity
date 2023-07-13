@@ -1368,6 +1368,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1132621677803206735, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
   m_PrefabInstance: {fileID: 280806869}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &690239568 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1284493888011870658, guid: a42c108aecdda294e95dae3e3b29676c, type: 3}
+  m_PrefabInstance: {fileID: 280806869}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &790380653
 GameObject:
   m_ObjectHideFlags: 0
@@ -1789,7 +1794,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4467344353861784276, guid: a6a17e791384d2e4c9cea43ab096449c, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4467344353861784276, guid: a6a17e791384d2e4c9cea43ab096449c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1934,6 +1939,10 @@ PrefabInstance:
       propertyPath: weaponSlot
       value: 
       objectReference: {fileID: 640012167}
+    - target: {fileID: 1202143849053037839, guid: c11512195613a2a4e8fe0be924ceb95c, type: 3}
+      propertyPath: activeSlots
+      value: 
+      objectReference: {fileID: 690239568}
     - target: {fileID: 1202143849053037839, guid: c11512195613a2a4e8fe0be924ceb95c, type: 3}
       propertyPath: inventoryObject
       value: 

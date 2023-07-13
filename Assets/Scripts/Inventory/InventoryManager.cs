@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using DungeonGame.Player;
 using DungeonGame.Items;
+using DungeonGame.Utils;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -14,8 +15,9 @@ public class InventoryManager : MonoBehaviour
     public GameObject inventoryObject;
     public GameObject itemObjectPrefab;
     public Toggle enableDeleteButton;
-    public GameObject weaponSlot;
-    private Item currentWeapon; // TODO: use datastructures
+    
+    public Transform activeSlots;
+    private Dictionary<ActiveSlot, Item> activeSlotItems;
     
     public List<Item> items = new List<Item>(); //This List includes every Item. 
     //The idea is that you can choose whether you want to see all Items together or sorted in groups.
@@ -24,9 +26,15 @@ public class InventoryManager : MonoBehaviour
     public List<Item> food = new List<Item>();
     public List<Item> questItems = new List<Item>();
     public List<Item> rewards = new List<Item>();
+    
     private void Awake()
     {
         instance = this;
+    }
+    
+    void Start()
+    {
+        activeSlotItems = new Dictionary<ActiveSlot, Item>();
     }
     
     private void AddToList(List<Item> list, Item item)
@@ -157,28 +165,30 @@ public class InventoryManager : MonoBehaviour
         }
     }
     
-    public void equipWeapon(Item item)
+    public void equipInActiveSlot(ActiveSlot slot, Item item)
     {
-        if(item == currentWeapon) return;
+        Transform slotTransform = activeSlots.GetChild((int) slot);
         
-        // move current weapon into main inventoy
-        if(currentWeapon != null)
+        if(activeSlotItems.TryGetValue(slot, out Item currentItem))
         {
-            Add(currentWeapon);
-            currentWeapon = null;
-            Destroy(weaponSlot.transform.GetChild(0).gameObject);
+            if(item == currentItem) return;
+            
+            // move current weapon into main inventoy
+            Add(currentItem);
+            activeSlotItems.Remove(slot);
+            Destroy(slotTransform.GetChild(0).gameObject);
         }
         
         // move selected weapon into the weapon slot
-        currentWeapon = item;
+        activeSlotItems.Add(slot, item);
         GameObject itemObject = Instantiate(itemObjectPrefab);
         InventoryItem inventoryItem = itemObject.GetComponent<InventoryItem>();
         inventoryItem.UpdateItemSlot(item);
-        itemObject.transform.SetParent(weaponSlot.transform);
-        itemObject.transform.position = weaponSlot.transform.position;
+        itemObject.transform.SetParent(slotTransform);
+        itemObject.transform.position = slotTransform.position;
         Remove(item);
         
         // set weapon of the player
-        PlayerScript.instance.SetWeapon((WeaponProperties) item.properties);
+        if(slot == ActiveSlot.WEAPON) PlayerScript.instance.SetWeapon((WeaponProperties) item.properties);
     }
 }

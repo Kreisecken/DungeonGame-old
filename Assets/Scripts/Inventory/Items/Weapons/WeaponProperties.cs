@@ -12,7 +12,7 @@ namespace DungeonGame.Items
         
         override public void InventoryClick(Item item)
         {
-            InventoryManager.instance.equipWeapon(item);
+            InventoryManager.instance.equipInActiveSlot(ActiveSlot.WEAPON, item);
         }
     }
 }
